@@ -1,0 +1,13 @@
+<Context>
+
+ <Resource name="jdbc/infprg03" 
+              auth="Container"
+              type="javax.sql.DataSource" 
+              username="root" 
+              password="root"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/infprg03"
+              maxActive="15" 
+              maxIdle="3"/>
+
+</Context>
