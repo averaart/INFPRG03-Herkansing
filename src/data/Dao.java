@@ -3,11 +3,13 @@ package data;
 //TODO Inloggen
 //TODO Registreren
 //TODO Lijst van alle enquetes opvragen. Indien ingelogd: geplitst in "Mijn enquetes" en "Overige enquetes" 
-//TODO Enquete uit lijst toevoegen
+//TODO Enquete uit "overige" lijst toevoegen
+//TODO Enquete uit "eigen" lijst verwijderen, mits niet voltooid.
 //TODO Enquete starten/vervolgen
 //TODO Vraag weergeven
 //TODO Vraag beantwoorden
 //TODO Enquete inleveren (=op voltooid zetten in database, en bewerken verbieden)
+//TODO Enquete statistieken weergeven
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
