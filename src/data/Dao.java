@@ -25,7 +25,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 		
-		init();
+//		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
