@@ -21,11 +21,11 @@ public class Dao {
 
 	static String url = "jdbc:mysql://localhost:3306/infprg03";
 	static String user = "root";
-	static String password = "root";
+	static String password = "";
 
 	public static void main(String[] args) {
-		
-//		init();
+
+		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -46,8 +46,8 @@ public class Dao {
 		// .println("Deze combinatie van naam en wachtwoord bestaat al!!!");
 		// }
 
-		 Survey survey = survey(2);
-		 System.out.println(survey.toString());
+		Survey survey = survey(2);
+		System.out.println(survey.toString());
 
 		// ArrayList<Survey> surveys = surveys();
 		// for (int i=0; i < surveys.size(); i++){
@@ -64,8 +64,8 @@ public class Dao {
 		// System.out.println(users.get(i).toString());
 		// }
 
-//		Question question = question(1, 2);
-//		System.out.println(question.toString());
+		// Question question = question(1, 2);
+		// System.out.println(question.toString());
 
 		// ArrayList<Question> questions = questions(1);
 		// for (int i=0; i < questions.size(); i++){
@@ -610,7 +610,12 @@ public class Dao {
 	 * @return
 	 */
 	private static ResultSet query(String query) {
-
+		try {
+			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+		} catch (SQLException e) {
+			System.out.println("Oops! Got a MySQL error: " + e.getMessage());
+		}
+		
 		System.out.println(query);
 		ResultSet rs = null;
 
@@ -630,11 +635,11 @@ public class Dao {
 
 		return rs;
 	}
-	
+
 	/**
 	 * Loads the database file to set up initial values
 	 */
-	private static void init(){
+	private static void init() {
 		try {
 			con = DriverManager.getConnection(url, user, password);
 			System.out.println(con.getAutoCommit());
@@ -642,6 +647,7 @@ public class Dao {
 			System.out.println(con.getAutoCommit());
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
+			System.out.println("error");
 			e1.printStackTrace();
 		}
 
