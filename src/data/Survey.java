@@ -8,8 +8,7 @@ public class Survey {
 	private String title;
 	public ArrayList<Question> questions;
 	public boolean completed;
-	
-	
+	public User user;
 	
 	/*
 	 * Survey
