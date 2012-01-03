@@ -75,7 +75,7 @@ public class Question {
 		String result = "";
 		result += getText();
 		if (answer != null){
-			result += "\n"+answer;
+			result += "<br>"+answer;
 		}
 		return result;
 	}
@@ -87,9 +87,9 @@ public class Question {
 	 */
 	public String toString(boolean getStats){
 		if (getStats){
-		return getText()+"\n - Open vraag - ";
+		return getText()+"<br> - Open vraag - ";
 		} else if (answer != null){
-			return getText()+"\n"+answer;
+			return getText()+"<br>"+answer;
 		}
 		return getText();
 	}

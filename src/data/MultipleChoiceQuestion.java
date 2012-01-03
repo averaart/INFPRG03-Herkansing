@@ -61,13 +61,13 @@ public class MultipleChoiceQuestion extends Question {
 	 */
 	@Override
 	public String toString() {
-		String result = getText() + "\n";
+		String result = getText() + "<br>";
 		for (int i = 0; i < options.size(); i++) {
 			result += (char) ('A' + i) + ": " + options.get(i);
 			if (options.get(i).equals(answer))
 				result += " <---";
 			if (i + 1 != options.size())
-				result += "\n";
+				result += "<br>";
 		}
 		return result;
 	}
@@ -84,7 +84,7 @@ public class MultipleChoiceQuestion extends Question {
 		for (Integer val : stats.values()) {
 			total += val;
 		}
-		String result = super.toString() + "\n";
+		String result = super.toString() + "<br>";
 		for (int i = 0; i < options.size(); i++) {
 			result += (char) ('A' + i) + ": " + options.get(i);
 			int val;
@@ -96,7 +96,7 @@ public class MultipleChoiceQuestion extends Question {
 
 			result += " - " + ((100.0 / total) * val) + "%";
 			if (i + 1 != options.size())
-				result += "\n";
+				result += "<br>";
 		}
 		return result;
 	}

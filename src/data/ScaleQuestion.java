@@ -76,7 +76,7 @@ public class ScaleQuestion extends Question {
 	 * Pretty prints a scale question
 	 */
 	public String toString(){
-		String result = super.toString()+"\n"+
+		String result = super.toString()+"<br>"+
 						getLowText()+" - ";
 		for (int i=1; i <= range; i++){
 			result += i+" ";
@@ -92,13 +92,13 @@ public class ScaleQuestion extends Question {
 	 */
 	public String toString(boolean getStats){
 		double average = Dao.stats(this);
-		String result = super.toString()+"\n"+
+		String result = super.toString()+"<br>"+
 						getLowText()+" - ";
 		for (int i=1; i <= range; i++){
 			result += i+" ";
 		}
 		result += "- "+getHighText();
-		result += "\n"+average;
+		result += "<br>"+average;
 		return result;
 	}
 }

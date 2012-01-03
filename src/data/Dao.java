@@ -1,5 +1,14 @@
 package data;
 
+//TODO Inloggen
+//TODO Registreren
+//TODO Lijst van alle enquetes opvragen. Indien ingelogd: geplitst in "Mijn enquetes" en "Overige enquetes" 
+//TODO Enquete uit lijst toevoegen
+//TODO Enquete starten/vervolgen
+//TODO Vraag weergeven
+//TODO Vraag beantwoorden
+//TODO Enquete inleveren (=op voltooid zetten in database, en bewerken verbieden)
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,7 +30,7 @@ public class Dao {
 
 	static String url = "jdbc:mysql://localhost:3306/infprg03";
 	static String user = "root";
-	static String password = "";
+	static String password = "root";
 
 	public static void main(String[] args) {
 
