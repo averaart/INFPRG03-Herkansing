@@ -19,7 +19,7 @@
 
 	<servlet>
 		<servlet-name>surveys</servlet-name>
-		<servlet-class>servlets.Surveys</servlet-class>
+		<servlet-class>servlets.SurveysServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

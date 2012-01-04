@@ -36,7 +36,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 
-		init();
+//		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -65,10 +65,11 @@ public class Dao {
 		// System.out.println(surveys.get(i).toString());
 		// }
 
-		// ArrayList<Survey> surveys = surveys(user("andra", "andra"));
-		// for (int i=0; i < surveys.size(); i++){
-		// System.out.println(surveys.get(i).toString());
-		// }
+//		 ArrayList<Survey> surveys = surveys(user("andra", "andra"));
+//		 System.out.println(surveys.size());
+//		 for (int i=0; i < surveys.size(); i++){
+//		 System.out.println(surveys.get(i).toString());
+//		 }
 
 		// ArrayList<User> users = users(survey(2));
 		// for (int i=0; i < users.size(); i++){
@@ -627,7 +628,7 @@ public class Dao {
 			System.out.println("Oops! Got a MySQL error: " + e.getMessage());
 		}
 		
-		// System.out.println(query);
+//		System.out.println(query);
 		ResultSet rs = null;
 
 		try {
