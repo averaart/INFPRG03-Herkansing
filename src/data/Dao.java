@@ -627,7 +627,7 @@ public class Dao {
 			System.out.println("Oops! Got a MySQL error: " + e.getMessage());
 		}
 		
-		System.out.println(query);
+		// System.out.println(query);
 		ResultSet rs = null;
 
 		try {

@@ -15,6 +15,13 @@ public class Survey {
 	 */
 	
 	/**
+	 * Default constructor for JSP pages. SHOULD NEVER BE USED.
+	 */
+	public Survey(){
+		id=-1;
+	}
+	
+	/**
 	 * Basic constructor
 	 * @param id This Survey's unique identifier
 	 */

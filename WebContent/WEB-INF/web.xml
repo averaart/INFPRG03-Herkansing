@@ -17,4 +17,14 @@
 		<url-pattern>/test</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>surveys</servlet-name>
+		<servlet-class>servlets.Surveys</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>surveys</servlet-name>
+		<url-pattern>/surveys</url-pattern>
+	</servlet-mapping>
+
 </web-app>
