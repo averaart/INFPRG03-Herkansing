@@ -10,17 +10,24 @@
 
 <ul>
 <c:forEach var="survey" items="${mySurveys}">
-	<li><a href="disconnect?surveyid=${survey.id}"><c:out value="${survey.title}" /></a></li>
+	<li><c:out value="${survey.title}" />
+	<c:if test="${survey.completed == false}">
+		<a href="disconnect?surveyid=${survey.id}"><img src="img/delete.png" /></a>
+	</c:if>
+	</li>
 </c:forEach>
 </ul>
 
+<c:if test="${not empty otherSurveys}">
 <h2>Overige enquetes</h2>
 
 <ul>
 <c:forEach var="survey" items="${otherSurveys}">
-	<li><a href="connect?surveyid=${survey.id}"><c:out value="${survey.title}" /></a></li>
+	<li><c:out value="${survey.title}" />
+		<a href="connect?surveyid=${survey.id}"><img src="img/add.png" /></a>
+	</li>
 </c:forEach>
 </ul>
-
+</c:if>
 
 <jsp:include page="inc/pagefoot.jsp"/>

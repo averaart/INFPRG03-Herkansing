@@ -58,6 +58,18 @@ public class Survey {
 	 */
 	
 	/**
+	 * Determines if a Survey was completed
+	 */
+	public boolean getCompleted(){
+		return completed;
+	}
+	
+	
+	public void setCompleted(){
+		this.completed = true;
+	}
+	
+	/**
 	 * Gets all Users connected to this Survey
 	 * @return A list of Users
 	 */

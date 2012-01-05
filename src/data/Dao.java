@@ -299,6 +299,7 @@ public class Dao {
 			while (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
+				if (rs.getInt(3) == 1) survey.setCompleted();
 				surveys.add(survey);
 			}
 		} catch (SQLException ex) {
@@ -677,7 +678,7 @@ public class Dao {
 			System.out.println("Oops! Got a MySQL error: " + e.getMessage());
 		}
 		
-		System.out.println(query);
+//		System.out.println(query);
 		ResultSet rs = null;
 
 		try {
