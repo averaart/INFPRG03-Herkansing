@@ -30,7 +30,6 @@
     <servlet-name>surveys</servlet-name>
     <url-pattern>/surveys</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <servlet-name>PlaceholderLogInOutServlet</servlet-name>
     <servlet-class>servlets.PlaceholderLogInOutServlet</servlet-class>
@@ -39,5 +38,20 @@
     <servlet-name>PlaceholderLogInOutServlet</servlet-name>
     <url-pattern>/log</url-pattern>
   </servlet-mapping>
-  
+  <servlet>
+    <servlet-name>connectUser</servlet-name>
+    <servlet-class>servlets.ConnectUserSurveyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>connectUser</servlet-name>
+    <url-pattern>/connect</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>disconnectUser</servlet-name>
+    <servlet-class>servlets.DisconnectUserSurveyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>disconnectUser</servlet-name>
+    <url-pattern>/disconnect</url-pattern>
+  </servlet-mapping>
 </web-app>

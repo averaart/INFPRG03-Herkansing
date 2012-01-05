@@ -10,7 +10,7 @@
 
 <ul>
 <c:forEach var="survey" items="${mySurveys}">
-	<li><c:out value="${survey.title}" /></li>
+	<li><a href="disconnect?surveyid=${survey.id}"><c:out value="${survey.title}" /></a></li>
 </c:forEach>
 </ul>
 
@@ -18,7 +18,7 @@
 
 <ul>
 <c:forEach var="survey" items="${otherSurveys}">
-	<li><c:out value="${survey.title}" /></li>
+	<li><a href="connect?surveyid=${survey.id}"><c:out value="${survey.title}" /></a></li>
 </c:forEach>
 </ul>
 

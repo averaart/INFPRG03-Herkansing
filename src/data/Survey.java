@@ -29,6 +29,10 @@ public class Survey {
 		this.id = id;
 	}
 	
+	public int getId(){
+		return id;
+	}
+	
 	/**
 	 * Gets the title of this Survey
 	 * @return The title

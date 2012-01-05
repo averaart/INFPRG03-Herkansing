@@ -84,8 +84,11 @@ public class Dao {
 		// System.out.println(questions.get(i).toString());
 		// }
 		
-		ArrayList<Survey> surveys = surveys(user(1), true);
+		// ArrayList<Survey> surveys = surveys(user(1), true);
 		
+		// connectUserToSurvey(user(1), survey(3));
+		// disconnectUserFromSurvey(user(1), survey(2));
+		// disconnectUserFromSurvey(user(1), survey(3));
 		
 		close();
 
@@ -267,6 +270,13 @@ public class Dao {
 	public static void connectUserToSurvey(User user, Survey survey) {
 		query("INSERT INTO user_survey(user_id, survey_id) VALUES (" + user.id
 				+ ", " + survey.id + ")");
+	}
+	
+	public static void disconnectUserFromSurvey(User user, Survey survey){
+		query("DELETE FROM user_survey " + 
+			  "WHERE user_id="+user.id+
+			  " AND survey_id="+survey.id+
+			  " AND completed = 0");		
 	}
 
 	// TODO Disconnect a User from a Survey
