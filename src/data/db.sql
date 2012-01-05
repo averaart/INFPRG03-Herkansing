@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : MySQL
+ Source Server         : Tomcat MySQL
  Source Server Type    : MySQL
- Source Server Version : 50509
+ Source Server Version : 50516
  Source Host           : localhost
  Source Database       : infprg03
 
  Target Server Type    : MySQL
- Target Server Version : 50509
+ Target Server Version : 50516
  File Encoding         : utf-8
 
- Date: 12/24/2011 11:57:59 AM
+ Date: 01/05/2012 10:50:15 AM
 */
 
 SET NAMES utf8;
@@ -186,5 +186,12 @@ CREATE TABLE `user_survey` (
   CONSTRAINT `user_survey_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `user_survey_ibfk_2` FOREIGN KEY (`survey_id`) REFERENCES `survey` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Records of `user_survey`
+-- ----------------------------
+BEGIN;
+INSERT INTO `user_survey` VALUES ('1', '1', b'1'), ('1', '2', b'1'), ('2', '1', b'1'), ('2', '2', b'1'), ('2', '3', b'0');
+COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

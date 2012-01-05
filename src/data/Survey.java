@@ -15,11 +15,22 @@ public class Survey {
 	 */
 	
 	/**
+	 * Default constructor for JSP pages. SHOULD NEVER BE USED.
+	 */
+	public Survey(){
+		id=-1;
+	}
+	
+	/**
 	 * Basic constructor
 	 * @param id This Survey's unique identifier
 	 */
 	public Survey(int id){
 		this.id = id;
+	}
+	
+	public int getId(){
+		return id;
 	}
 	
 	/**
@@ -77,9 +88,9 @@ public class Survey {
 		
 		result += "*** "+id+" - "+getTitle()+" ***<br><br>";
 		
-		for (int i=0; i < questions.size(); i++){
-			result += (i+1)+" - "+questions.get(i).toString(true)+"<br><br>";
-		}
+//		for (int i=0; i < questions.size(); i++){
+//			result += (i+1)+" - "+questions.get(i).toString(true)+"<br><br>";
+//		}
 		
 		return result;
 	}

@@ -3,11 +3,13 @@ package data;
 //TODO Inloggen
 //TODO Registreren
 //TODO Lijst van alle enquetes opvragen. Indien ingelogd: geplitst in "Mijn enquetes" en "Overige enquetes" 
-//TODO Enquete uit lijst toevoegen
+//TODO Enquete uit "overige" lijst toevoegen
+//TODO Enquete uit "eigen" lijst verwijderen, mits niet voltooid.
 //TODO Enquete starten/vervolgen
 //TODO Vraag weergeven
 //TODO Vraag beantwoorden
 //TODO Enquete inleveren (=op voltooid zetten in database, en bewerken verbieden)
+//TODO Enquete statistieken weergeven
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -34,7 +36,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 
-		init();
+//		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -55,18 +57,19 @@ public class Dao {
 		// .println("Deze combinatie van naam en wachtwoord bestaat al!!!");
 		// }
 
-		Survey survey = survey(2);
-		System.out.println(survey.toString());
+//		Survey survey = survey(2);
+//		System.out.println(survey.toString());
 
 		// ArrayList<Survey> surveys = surveys();
 		// for (int i=0; i < surveys.size(); i++){
 		// System.out.println(surveys.get(i).toString());
 		// }
 
-		// ArrayList<Survey> surveys = surveys(user("andra", "andra"));
-		// for (int i=0; i < surveys.size(); i++){
-		// System.out.println(surveys.get(i).toString());
-		// }
+//		 ArrayList<Survey> surveys = surveys(user("andra", "andra"));
+//		 System.out.println(surveys.size());
+//		 for (int i=0; i < surveys.size(); i++){
+//		 System.out.println(surveys.get(i).toString());
+//		 }
 
 		// ArrayList<User> users = users(survey(2));
 		// for (int i=0; i < users.size(); i++){
@@ -80,7 +83,13 @@ public class Dao {
 		// for (int i=0; i < questions.size(); i++){
 		// System.out.println(questions.get(i).toString());
 		// }
-
+		
+		// ArrayList<Survey> surveys = surveys(user(1), true);
+		
+		// connectUserToSurvey(user(1), survey(3));
+		// disconnectUserFromSurvey(user(1), survey(2));
+		// disconnectUserFromSurvey(user(1), survey(3));
+		
 		close();
 
 	}
@@ -262,6 +271,13 @@ public class Dao {
 		query("INSERT INTO user_survey(user_id, survey_id) VALUES (" + user.id
 				+ ", " + survey.id + ")");
 	}
+	
+	public static void disconnectUserFromSurvey(User user, Survey survey){
+		query("DELETE FROM user_survey " + 
+			  "WHERE user_id="+user.id+
+			  " AND survey_id="+survey.id+
+			  " AND completed = 0");		
+	}
 
 	// TODO Disconnect a User from a Survey
 
@@ -292,6 +308,42 @@ public class Dao {
 		return surveys;
 	}
 
+	/**
+	 * Fetches all Surveys that are NOT connected to a particular User
+	 * 
+	 * @param user
+	 * @param other Indicates the reversal of surveys(user)
+	 * @return
+	 */
+	public static ArrayList<Survey> surveys(User user, boolean other) {
+		ArrayList<Survey> surveys = new ArrayList<Survey>();
+		Survey survey = null;
+		ResultSet rs = query("SELECT survey.id, title, completed " + 
+				"FROM user " + 
+				"JOIN user_survey " + 
+				"ON user.id = user_survey.user_id " + 
+				"JOIN survey " + 
+				"ON user_survey.survey_id = survey.id " + 
+				"WHERE survey.id NOT IN (SELECT survey.id " + 
+				"FROM user " + 
+				"JOIN user_survey " + 
+				"ON user.id = user_survey.user_id " + 
+				"JOIN survey " + 
+				"ON user_survey.survey_id = survey.id " + 
+				"WHERE user.id = "
+				+ user.id +")");
+		try {
+			while (rs.next()) {
+				survey = new Survey(rs.getInt(1));
+				survey.setTitle(rs.getString(2));
+				surveys.add(survey);
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		return surveys;
+	}
 	/**
 	 * Fetches all Users that are connected to a particular Survey
 	 * 

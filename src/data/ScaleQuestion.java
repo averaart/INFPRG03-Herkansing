@@ -5,6 +5,7 @@ public class ScaleQuestion extends Question {
 	private int range;
 	private String lowText;
 	private String highText;
+	//TODO comments
 	
 	/**
 	 * Basic constructor for a ScaleQuestion
