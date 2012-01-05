@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 
-<jsp:include page="pagehead.jsp" />
+<jsp:include page="inc/pagehead.jsp" />
 
 <h1>Home</h1>
 <p>Welkom op deze enquete website. Morbi rhoncus dapibus hendrerit.
@@ -12,4 +12,4 @@
 	ornare mauris auctor id. Sed ac nisl metus. In vulputate mattis nisl,
 	sed mattis erat euismod ut. Sed eget tempus leo.</p>
 
-<jsp:include page="pagefoot.jsp" />
+<jsp:include page="inc/pagefoot.jsp" />

@@ -37,10 +37,16 @@ public class SurveysServlet extends HttpServlet {
 			}
 
 		} else {
-			ArrayList<Survey> surveys = Dao.surveys(user);
-			request.setAttribute("surveys", surveys);
+			ArrayList<Survey> mySurveys = Dao.surveys(user);
+			ArrayList<Survey> otherSurveys = Dao.surveys(user, true);
+			
+			request.setAttribute("mySurveys", mySurveys);
+			request.setAttribute("otherSurveys", otherSurveys);
+			log(otherSurveys.toString());
+			
 			request.setAttribute("title", "Alle enquetes van "+user.getName());
-			RequestDispatcher rd = request.getRequestDispatcher("surveys.jsp");
+
+			RequestDispatcher rd = request.getRequestDispatcher("usersurveys.jsp");
 			try {
 				rd.forward(request, response);
 			} catch (ServletException e) {

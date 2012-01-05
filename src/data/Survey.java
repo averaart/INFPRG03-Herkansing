@@ -84,9 +84,9 @@ public class Survey {
 		
 		result += "*** "+id+" - "+getTitle()+" ***<br><br>";
 		
-		for (int i=0; i < questions.size(); i++){
-			result += (i+1)+" - "+questions.get(i).toString(true)+"<br><br>";
-		}
+//		for (int i=0; i < questions.size(); i++){
+//			result += (i+1)+" - "+questions.get(i).toString(true)+"<br><br>";
+//		}
 		
 		return result;
 	}

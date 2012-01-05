@@ -9,9 +9,18 @@
 <jsp:include page="inc/pagetitle.jsp"/>
 
 <ul>
-<c:forEach var="survey" items="${surveys}">
+<c:forEach var="survey" items="${mySurveys}">
 	<li><c:out value="${survey.title}" /></li>
 </c:forEach>
 </ul>
+
+<h2>Overige enquetes</h2>
+
+<ul>
+<c:forEach var="survey" items="${otherSurveys}">
+	<li><c:out value="${survey.title}" /></li>
+</c:forEach>
+</ul>
+
 
 <jsp:include page="inc/pagefoot.jsp"/>
