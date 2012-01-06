@@ -18,14 +18,14 @@
 <body>
 <div id="content">
 <div id="navigation">
-<a href="/infprg03/">Home</a>&ensp;&mdash;&ensp;
-<a href="/infprg03/surveys">Alle enquetes</a>&ensp;&mdash;&ensp;
+<a href="<c:url value="/" />/">Home</a>&ensp;&mdash;&ensp;
+<a href="<c:url value="/surveys" />">Alle enquetes</a>&ensp;&mdash;&ensp;
 	<c:choose>
 	    <c:when test="${empty sessionScope.user}">
-			<a href="/infprg03/log">Inloggen</a>
+			<a href="<c:url value="/inloggen" />">Inloggen</a>
 	    </c:when>
 	    <c:otherwise>
-	        <a href="/infprg03/log">Uitloggen</a>
+	        <a href="<c:url value="/uitloggen" />">Uitloggen</a>
 	    </c:otherwise>
 	</c:choose>
 

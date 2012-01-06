@@ -40,5 +40,14 @@ a:active {color:#aa0000;}  /* selected link */
 	box-shadow: 0px 0px 15px 0px rgba(00, 00, 00, 1);
 }
 
+label {
+	display: inline-block;
+	width: 225px;
+}
+
+.errorMsg {
+	color: #ee3c1c;
+}
+
 /*]]>*/
 </style>

@@ -31,14 +31,6 @@
     <url-pattern>/surveys</url-pattern>
   </servlet-mapping>
   <servlet>
-    <servlet-name>PlaceholderLogInOutServlet</servlet-name>
-    <servlet-class>servlets.PlaceholderLogInOutServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>PlaceholderLogInOutServlet</servlet-name>
-    <url-pattern>/log</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <servlet-name>connectUser</servlet-name>
     <servlet-class>servlets.ConnectUserSurveyServlet</servlet-class>
   </servlet>
@@ -54,4 +46,28 @@
     <servlet-name>disconnectUser</servlet-name>
     <url-pattern>/disconnect</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>UserRegistration</servlet-name>
+    <servlet-class>servlets.UserRegistration</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserRegistration</servlet-name>
+    <url-pattern>/registreren</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>UserLogin</servlet-name>
+    <servlet-class>servlets.UserLogin</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserLogin</servlet-name>
+    <url-pattern>/inloggen</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>UserLogout</servlet-name>
+    <servlet-class>servlets.UserLogout</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserLogout</servlet-name>
+    <url-pattern>/uitloggen</url-pattern>
+  </servlet-mapping>  
 </web-app>

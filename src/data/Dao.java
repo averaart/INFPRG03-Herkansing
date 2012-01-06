@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -36,7 +37,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 
-//		init();
+		// init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -57,19 +58,19 @@ public class Dao {
 		// .println("Deze combinatie van naam en wachtwoord bestaat al!!!");
 		// }
 
-//		Survey survey = survey(2);
-//		System.out.println(survey.toString());
+		// Survey survey = survey(2);
+		// System.out.println(survey.toString());
 
 		// ArrayList<Survey> surveys = surveys();
 		// for (int i=0; i < surveys.size(); i++){
 		// System.out.println(surveys.get(i).toString());
 		// }
 
-//		 ArrayList<Survey> surveys = surveys(user("andra", "andra"));
-//		 System.out.println(surveys.size());
-//		 for (int i=0; i < surveys.size(); i++){
-//		 System.out.println(surveys.get(i).toString());
-//		 }
+		// ArrayList<Survey> surveys = surveys(user("andra", "andra"));
+		// System.out.println(surveys.size());
+		// for (int i=0; i < surveys.size(); i++){
+		// System.out.println(surveys.get(i).toString());
+		// }
 
 		// ArrayList<User> users = users(survey(2));
 		// for (int i=0; i < users.size(); i++){
@@ -83,13 +84,13 @@ public class Dao {
 		// for (int i=0; i < questions.size(); i++){
 		// System.out.println(questions.get(i).toString());
 		// }
-		
+
 		// ArrayList<Survey> surveys = surveys(user(1), true);
-		
+
 		// connectUserToSurvey(user(1), survey(3));
 		// disconnectUserFromSurvey(user(1), survey(2));
 		// disconnectUserFromSurvey(user(1), survey(3));
-		
+
 		close();
 
 	}
@@ -149,6 +150,30 @@ public class Dao {
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
 		return user;
+	}
+
+	/**
+	 * Checks if a username already exists.
+	 * 
+	 * @param name
+	 *            The username to be checked
+	 * @return If the username exist. True if it exists, False if is doesn't
+	 *         exist.
+	 */
+	public static boolean userExists(String name) {
+		boolean result = false;
+		String q = "SELECT id FROM user WHERE name= ?";
+		PreparedStatement stmt;
+		
+		try {
+			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			con = DriverManager.getConnection(url, user, password);
+			stmt = con.prepareStatement(q);
+			stmt.setString(1, name);
+			result = stmt.executeQuery().next();
+			stmt.close();
+		} catch(SQLException e) {}
+		return result;
 	}
 
 	/**
@@ -271,12 +296,10 @@ public class Dao {
 		query("INSERT INTO user_survey(user_id, survey_id) VALUES (" + user.id
 				+ ", " + survey.id + ")");
 	}
-	
-	public static void disconnectUserFromSurvey(User user, Survey survey){
-		query("DELETE FROM user_survey " + 
-			  "WHERE user_id="+user.id+
-			  " AND survey_id="+survey.id+
-			  " AND completed = 0");		
+
+	public static void disconnectUserFromSurvey(User user, Survey survey) {
+		query("DELETE FROM user_survey " + "WHERE user_id=" + user.id
+				+ " AND survey_id=" + survey.id + " AND completed = 0");
 	}
 
 	// TODO Disconnect a User from a Survey
@@ -312,26 +335,21 @@ public class Dao {
 	 * Fetches all Surveys that are NOT connected to a particular User
 	 * 
 	 * @param user
-	 * @param other Indicates the reversal of surveys(user)
+	 * @param other
+	 *            Indicates the reversal of surveys(user)
 	 * @return
 	 */
 	public static ArrayList<Survey> surveys(User user, boolean other) {
 		ArrayList<Survey> surveys = new ArrayList<Survey>();
 		Survey survey = null;
-		ResultSet rs = query("SELECT survey.id, title, completed " + 
-				"FROM user " + 
-				"JOIN user_survey " + 
-				"ON user.id = user_survey.user_id " + 
-				"JOIN survey " + 
-				"ON user_survey.survey_id = survey.id " + 
-				"WHERE survey.id NOT IN (SELECT survey.id " + 
-				"FROM user " + 
-				"JOIN user_survey " + 
-				"ON user.id = user_survey.user_id " + 
-				"JOIN survey " + 
-				"ON user_survey.survey_id = survey.id " + 
-				"WHERE user.id = "
-				+ user.id +")");
+		ResultSet rs = query("SELECT survey.id, title, completed "
+				+ "FROM user " + "JOIN user_survey "
+				+ "ON user.id = user_survey.user_id " + "JOIN survey "
+				+ "ON user_survey.survey_id = survey.id "
+				+ "WHERE survey.id NOT IN (SELECT survey.id " + "FROM user "
+				+ "JOIN user_survey " + "ON user.id = user_survey.user_id "
+				+ "JOIN survey " + "ON user_survey.survey_id = survey.id "
+				+ "WHERE user.id = " + user.id + ")");
 		try {
 			while (rs.next()) {
 				survey = new Survey(rs.getInt(1));
@@ -344,6 +362,7 @@ public class Dao {
 		}
 		return surveys;
 	}
+
 	/**
 	 * Fetches all Users that are connected to a particular Survey
 	 * 
@@ -676,7 +695,7 @@ public class Dao {
 		} catch (SQLException e) {
 			System.out.println("Oops! Got a MySQL error: " + e.getMessage());
 		}
-		
+
 		System.out.println(query);
 		ResultSet rs = null;
 
