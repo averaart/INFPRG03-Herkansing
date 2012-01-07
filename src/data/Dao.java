@@ -1,7 +1,5 @@
 package data;
 
-//TODO Inloggen
-//TODO Registreren
 //TODO Lijst van alle enquetes opvragen. Indien ingelogd: geplitst in "Mijn enquetes" en "Overige enquetes" 
 //TODO Enquete uit "overige" lijst toevoegen
 //TODO Enquete uit "eigen" lijst verwijderen, mits niet voltooid.
@@ -253,7 +251,9 @@ public class Dao {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-		survey.questions = questions(survey.id);
+		if(survey != null) {
+			survey.questions = questions(survey.id);	
+		}
 
 		return survey;
 	}

@@ -69,5 +69,13 @@
   <servlet-mapping>
     <servlet-name>UserLogout</servlet-name>
     <url-pattern>/uitloggen</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>RunQuestionnaire</servlet-name>
+    <servlet-class>servlets.RunQuestionnaire</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RunQuestionnaire</servlet-name>
+    <url-pattern>/enquete/*</url-pattern>
   </servlet-mapping>  
 </web-app>
