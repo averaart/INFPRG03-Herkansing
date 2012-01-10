@@ -51,8 +51,6 @@ public class Survey {
 		return true;
 	}
 
-	
-	
 	/*
 	 * User
 	 */
@@ -95,6 +93,7 @@ public class Survey {
 	/**
 	 * Prints the title and questions of this Survey
 	 */
+	@Override
 	public String toString(){
 		String result = "";
 		

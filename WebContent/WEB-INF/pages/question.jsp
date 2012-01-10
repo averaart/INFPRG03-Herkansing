@@ -19,29 +19,107 @@
    	</c:otherwise>
 </c:choose>
 
-<form method="post" action="<c:url value="/" />">
-	<h2>Vraag ${questionNumber} - ${question.text}</h2>
-	<c:choose>
-	    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'option'}">
-			<c:forEach var="option" items="${question.options}">
-				<input type="radio" name="answer" value="${option}" /> ${option}<br />
-			</c:forEach>
-			<h4>Toelichting</h4>
-			<textarea name="explanation" cols="60" rows="3"></textarea><br />	
-	    </c:when>
-	    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'scale'}">
-			<p>1 = ${question.lowText}, ${question.range} = ${question.highText}</p>
-			<c:forEach var="i" begin="1" end="${question.range}" step="1">
-				<input type="radio" name="answer" value="${i}" /> ${i}<br />
-			</c:forEach>
-			<h4>Toelichting</h4>
-			<textarea name="explanation" cols="60" rows="3"></textarea><br />	
-		</c:when>
-	    <c:otherwise>
-	    	<textarea name="answer" cols="60" rows="5"></textarea><br />	
-	    </c:otherwise>
-	</c:choose>
-	<input style="margin-top: 30px;" type="submit" name="saveQuestion" value="Opslaan" />
-</form>
+<h2>Vraag ${questionNumber} - ${question.text}</h2>
+<c:choose>
+	<c:when test="${survey.completed == 'false'}">
+		<form method="post" action="<c:url value="/enquete/${survey.id}/${questionNumber}" />">
+			<c:choose>
+			    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'option'}">
+					<c:forEach var="option" items="${question.options}">
+						<c:choose>
+							<c:when test="${option == question.answer}">
+								<input type="radio" name="answer" value="${option}" checked="checked" /> ${option}<br />
+							</c:when>
+							<c:otherwise>
+								<input type="radio" name="answer" value="${option}" /> ${option}<br />							
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+					<h4>Toelichting op uw antwoord</h4>
+					<textarea name="comment" cols="60" rows="3">${question.comment}</textarea><br />	
+			    </c:when>
+			    
+			    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'scale'}">
+					<p>1 = ${question.lowText}, ${question.range} = ${question.highText}</p>
+					<c:forEach var="i" begin="1" end="${question.range}" step="1">
+						<c:choose>
+							<c:when test="${i == question.answer}">
+								<input type="radio" name="answer" value="${i}" checked="checked" /> ${i}<br />
+							</c:when>
+							<c:otherwise>
+								<input type="radio" name="answer" value="${i}" /> ${i}<br />							
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+					<h4>Toelichting op uw antwoord</h4>
+					<textarea name="comment" cols="60" rows="3">${question.comment}</textarea><br />	
+				</c:when>
+			    
+			    <c:otherwise>
+			    	<textarea name="answer" cols="60" rows="5"></textarea><br />	
+			    </c:otherwise>
+			</c:choose>
+			<input style="margin-top: 30px;" type="submit" name="saveQuestion" value="Opslaan" />
+		</form>
+	</c:when>
+
+	
+	<c:otherwise>
+		<c:choose>
+		    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'option'}">
+				<ul>
+				<c:forEach var="option" items="${question.options}">
+					<c:choose>
+						<c:when test="${option == question.answer}">
+							<li class="answer">${option} - Uw antwoord</li>
+						</c:when>
+						<c:otherwise>
+							<li>${option}</li>
+						</c:otherwise>
+					</c:choose>							 
+				</c:forEach>
+				</ul>
+				<h4>Toelichting op uw antwoord</h4>
+				<c:choose>
+					<c:when test="${not empty question.comment and question.comment != ''}">
+						<p>${question.comment}</p>
+					</c:when>
+					<c:otherwise>
+						<p>U heeft geen toelichting gegeven.</p>
+					</c:otherwise>
+				</c:choose>
+		    </c:when>
+			    
+		    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'scale'}">
+				<p>1 = ${question.lowText}, ${question.range} = ${question.highText}</p>
+				<ul>
+					<c:forEach var="i" begin="1" end="${question.range}" step="1">
+						<c:choose>
+							<c:when test="${i == question.answer}">
+								<li class="answer">${i} - Uw antwoord</li>
+							</c:when>
+							<c:otherwise>
+								<li>${i}</li>
+							</c:otherwise>
+						</c:choose>
+					</c:forEach>
+				</ul>
+				<h4>Toelichting op uw antwoord</h4>
+				<c:choose>
+					<c:when test="${not empty question.comment and question.comment != ''}">
+						<p>${question.comment}</p>
+					</c:when>
+					<c:otherwise>
+						<p>U heeft geen toelichting gegeven.</p>
+					</c:otherwise>
+				</c:choose>
+			</c:when>
+		    
+		    <c:otherwise>
+		    	<p>${question.answer}</p>
+		    </c:otherwise>
+		</c:choose>
+	</c:otherwise>
+</c:choose>
 
 <jsp:include page="../../inc/pagefoot.jsp" />

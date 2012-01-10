@@ -306,6 +306,33 @@ public class Dao {
 	// TODO Disconnect a User from a Survey
 
 	/**
+	 * Fetches the surveys with surveyId and that is connected to a particular User
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public static Survey survey(User user, int surveyId) {
+		Survey survey = null;
+		ResultSet rs = query("SELECT survey.id, title, completed "
+				+ "FROM user " + "JOIN user_survey "
+				+ "ON user.id = user_survey.user_id " + "JOIN survey "
+				+ "ON user_survey.survey_id = survey.id " + "WHERE user.id = "
+				+ user.id + " AND survey.id = " + surveyId);
+		try {
+			if(rs.next()) {
+				survey = new Survey(rs.getInt(1));
+				survey.setTitle(rs.getString(2));
+				survey.questions = questions(survey.id);
+				if (rs.getInt(3) == 1) survey.setCompleted();
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		return survey;
+	}
+	
+	/**
 	 * Fetches all Surveys that are connected to a particular User
 	 * 
 	 * @param user
@@ -475,7 +502,7 @@ public class Dao {
 				boolean multi = (!rs.wasNull());
 				if (scale) {
 					ScaleQuestion question = new ScaleQuestion(rs.getInt(1),
-							rs.getInt(2));
+							rs.getInt(2), userId);
 					question.setRange(rs.getInt(4));
 					question.setLowText(rs.getString(5));
 					question.setHighText(rs.getString(6));
@@ -644,7 +671,36 @@ public class Dao {
 		return result;
 	}
 
-	// TODO Fetch the answer to a ScaleQuestion.
+	/**
+	 * Fetches the answer and comment a user has given for a particular
+	 * ScaleQuestion.
+	 * 
+	 * @param question
+	 *            It is assumed that a userId has been assigned to this
+	 *            Question.
+	 * @return An Array containing 2 Strings: [0] the answer, [1] the comment.
+	 */
+	public static String[] answer(ScaleQuestion question) {
+		String[] result = new String[2];
+
+		ResultSet rs = query("SELECT answer_scale.value, answer.text "
+				+ "FROM answer " 
+				+ "JOIN answer_scale "
+				+ "ON answer.id = answer_scale.answer_id "
+				+ "WHERE answer.question_id = " + question.id + " "
+				+ "AND user_id = " + question.getUserId());
+		try {
+			while (rs.next()) {
+				result[0] = rs.getString(1);
+				result[1] = rs.getString(2);
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+
+		return result;
+	}
 
 	/**
 	 * Stores the answer to a Question in the database.
@@ -674,6 +730,10 @@ public class Dao {
 
 	}
 
+	public static void storeMultipleChoiseAnswer(Question question, int range) {
+		
+	}
+	
 	// TODO Store the answer to a MultipleChoiseQuestion
 
 	// TODO Store the answer to a ScaleQuestion

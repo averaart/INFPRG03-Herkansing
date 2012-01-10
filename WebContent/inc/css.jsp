@@ -29,6 +29,10 @@ a:visited {color:#aa0000;}  /* visited link */
 a:hover {color:#ee0000;}  /* mouse over link */
 a:active {color:#aa0000;}  /* selected link */
 
+.answer {
+	font-weight: bold;
+	color: #ff0000;
+}
 
 #content {
 	width: 720px;
