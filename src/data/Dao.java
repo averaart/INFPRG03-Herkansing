@@ -83,8 +83,9 @@ public class Dao {
 		// System.out.println(questions.get(i).toString());
 		// }
 
-		// ArrayList<Survey> surveys = surveys(user(1), true);
-
+		ArrayList<Survey> surveys = surveys(user(1), true);
+		System.out.println(surveys.size());
+		
 		// connectUserToSurvey(user(1), survey(3));
 		// disconnectUserFromSurvey(user(1), survey(2));
 		// disconnectUserFromSurvey(user(1), survey(3));
@@ -343,10 +344,8 @@ public class Dao {
 	public static ArrayList<Survey> surveys(User user, boolean other) {
 		ArrayList<Survey> surveys = new ArrayList<Survey>();
 		Survey survey = null;
-		ResultSet rs = query("SELECT survey.id, title, completed "
-				+ "FROM user " + "JOIN user_survey "
-				+ "ON user.id = user_survey.user_id " + "JOIN survey "
-				+ "ON user_survey.survey_id = survey.id "
+		ResultSet rs = query("SELECT id, title "
+				+ "FROM survey "
 				+ "WHERE survey.id NOT IN (SELECT survey.id " + "FROM user "
 				+ "JOIN user_survey " + "ON user.id = user_survey.user_id "
 				+ "JOIN survey " + "ON user_survey.survey_id = survey.id "
@@ -691,6 +690,9 @@ public class Dao {
 	 * @return
 	 */
 	private static ResultSet query(String query) {
+		
+		System.out.println(query);
+		
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 		} catch (SQLException e) {
