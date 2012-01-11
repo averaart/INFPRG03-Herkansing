@@ -72,7 +72,7 @@ public class Question {
 	 * @param answer
 	 */
 	public void setAnswer(String answer){
-		Dao.storeAnswer(this, answer);
+//		Dao.storeAnswer(this, answer);
 		this.answer = answer;
 	}
 	

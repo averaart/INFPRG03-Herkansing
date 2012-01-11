@@ -30,6 +30,10 @@ public class RunQuestionnaire extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession(true);
+		User user = Dao.user("maarten", "maarten");
+		session.setAttribute("user", user);
+		
 		route(request, response, false);
 	}
 
@@ -189,6 +193,7 @@ public class RunQuestionnaire extends HttpServlet {
 		 */
 		if (Pattern.matches("/(\\d+)/(\\d+)/?", pathInfo)) {
 			if(methodIsPost) {
+				System.out.println("TRY TO SAVE");
 				if(!saveAnswer(request, response, questionNumber, userId, surveyId)){
 					status = "Er is geen correct antwoord ingevuld";
 				}
@@ -196,11 +201,14 @@ public class RunQuestionnaire extends HttpServlet {
 			showQuestion(request, response, surveyId, userId, questionNumber, status);
 		}
 		else if (Pattern.matches("/(\\d+)/afronden/?", pathInfo)) {
+			if(methodIsPost) {
+				System.out.println("TRY TO COMPLETE");
+			}
 			//TODO complete page post (if methodIsPost)
 			showCompletionPage(request, response, surveyId, userId);
 		}
 		else {
-			// TODO 404 - page not found
+			//TODO 404 - page not found
 		}
 	}
 	
@@ -210,6 +218,7 @@ public class RunQuestionnaire extends HttpServlet {
 		if (questionNumber > 0 && survey.questions.size() >= questionNumber) {
 			int questionId = survey.questions.get(questionNumber - 1).getId();
 			Question question = Dao.question(questionId, userId);
+			question.setUserId(userId);
 			
 			String answer = request.getParameter("answer").trim();
 			String comment;
@@ -222,21 +231,51 @@ public class RunQuestionnaire extends HttpServlet {
 			if(answerChanged) {
 				question.setAnswer(answer);
 			}
+			System.out.println(answer);
 			
 			boolean commentChanged = false;
+			System.out.println(question.getClass());
 			if (question instanceof MultipleChoiceQuestion) {
+				System.out.println("Multi");
 				comment = request.getParameter("comment").trim();
-				if(((MultipleChoiceQuestion) question).getComment() == comment) {
-					
+				System.out.println(comment);
+				if(((MultipleChoiceQuestion) question).getComment() != null) {
+					if(((MultipleChoiceQuestion) question).getComment().compareTo(comment) != 0) {
+						((MultipleChoiceQuestion) question).setComment(comment);
+						commentChanged = true;
+					}	
 				}
+				else {
+					((MultipleChoiceQuestion) question).setComment(comment);
+					commentChanged = true;
+				}
+				
 			}
 			else if (question instanceof ScaleQuestion) {
 				comment = request.getParameter("comment").trim();
+				if(((ScaleQuestion) question).getComment() != null) {
+					if(((ScaleQuestion) question).getComment().compareTo(comment) != 0) {
+						((ScaleQuestion) question).setComment(comment);
+						commentChanged = true;
+					}
+				}
+				else {
+					((ScaleQuestion) question).setComment(comment);
+					commentChanged = true;
+				}
 			}
 			
-			question.setUserId(userId);
-			question.setAnswer(answer);
-//			((MultipleChoiceQuestion) question).setComment(comment);
+			if(answerChanged || commentChanged) {
+				if (question instanceof MultipleChoiceQuestion) {
+					System.out.println("save multi");
+					return Dao.storeMultipleChoiseAnswer(question);
+				}
+				else if(question instanceof ScaleQuestion) {
+					return true;
+				} else
+				{
+				}
+			}
 		}
 		
 		return false;
