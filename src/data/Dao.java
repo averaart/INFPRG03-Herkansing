@@ -730,12 +730,135 @@ public class Dao {
 
 	}
 
-	public static void storeMultipleChoiseAnswer(Question question, int range) {
-		
+	public static void storeAnswer(Question question) {
+		ResultSet rs = query("SELECT text " + "FROM answer "
+				+ "WHERE user_id = " + question.getUserId() + " "
+				+ "AND question_id = " + question.id);
+		try {
+			if (rs.next()) {
+				rs.updateString(1, question.getAnswer());
+				rs.updateRow();
+			} else {
+				query("INSERT INTO answer(question_id, user_id, text) "
+						+ "VALUES (" + question.id + ", "
+						+ question.getUserId() + ", '" + question.getAnswer() + "')");
+			}
+		} catch (SQLException ex) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
 	}
 	
-	// TODO Store the answer to a MultipleChoiseQuestion
+	public static boolean storeMultipleChoiseAnswer(Question question) {
+		MultipleChoiceQuestion q = (MultipleChoiceQuestion) question;
+		int optionId = -1;
+		int answerId = -1;
+		
+		PreparedStatement getOptionId;
+		PreparedStatement getAnswerId;
+		PreparedStatement storeAnswer;
+		PreparedStatement storeAnswerOption;
 
+		ResultSet rOptionId;
+		ResultSet rAnswerId;
+		
+		//getOptionId
+
+		
+		try {
+			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			con = DriverManager.getConnection(url, user, password);
+			
+			con.setAutoCommit(false);
+
+			String qGetOptionId = 
+					"SELECT id, text" +
+					"FROM option" +
+					"WHERE question_id = ?";
+
+			//getAnswerId
+			String qGetAnswerId = 
+					"SELECT id" +
+					"FROM answer" +
+					"WHERE question_id = ?" +
+					"AND user_id = ?";
+			
+			getOptionId = con.prepareStatement(qGetOptionId);
+			getOptionId.setInt(1, q.getId());
+			rOptionId = getOptionId.executeQuery();
+			while(rOptionId.next()) {
+				if(rOptionId.getString(2).compareTo(q.getAnswer()) == 0){
+					optionId = rOptionId.getInt(1);
+				}
+			}
+			if(optionId == -1) {
+				return false;
+			}
+			
+			getAnswerId = con.prepareStatement(qGetAnswerId);
+			getAnswerId.setInt(1, q.getId());
+			getAnswerId.setInt(2, q.getUserId());
+			rAnswerId = getAnswerId.executeQuery();
+			if(rAnswerId.next()) {
+				answerId = rAnswerId.getInt(1);
+			}
+			
+			con.setAutoCommit(false);
+			if(answerId == -1) {
+				
+				String qInsertAnswer = 
+						"INSERT INTO answer (question_id, user_id, text)" +
+						"VALUES(?, ?, ?)";
+				
+				String qInsertAnswerOption = 
+						"INSERT INTO answer_option (answer_id, option_id)" +
+						"VALUES(?, ?)";
+				
+				storeAnswer = con.prepareStatement(qInsertAnswer);
+				storeAnswer.setInt(1, q.getId());
+				storeAnswer.setInt(2, q.getUserId());
+				storeAnswer.setString(3, q.getComment());
+				
+				storeAnswerOption = con.prepareStatement(qInsertAnswerOption);
+				storeAnswerOption.setInt(1, answerId);
+				storeAnswerOption.setInt(2, optionId);
+			} 
+			else
+			{
+				String qUpdateAnswer = 
+						"UPDATE answer" +
+						"SET text = ?" +
+						"WHERE id = ?";
+
+				String qUpdateAnswerOption = 
+						"UPDATE answer_option" +
+						"SET option_id = ?" +
+						"WHERE answer_id = ?";
+				
+				storeAnswer = con.prepareStatement(qUpdateAnswer);
+				storeAnswer.setString(1, q.getComment());
+				storeAnswer.setInt(2, answerId);
+				
+				storeAnswerOption = con.prepareStatement(qUpdateAnswerOption);
+				storeAnswerOption.setInt(1, optionId);
+				storeAnswerOption.setInt(2, answerId);
+			}
+			
+			con.commit();
+			con.setAutoCommit(true);
+			
+			getOptionId.close();
+			getAnswerId.close();
+			storeAnswer.close();
+			storeAnswerOption.close();
+			
+			return true;
+			
+		} catch(SQLException e) {
+			return false;
+		}
+	}
+	
 	// TODO Store the answer to a ScaleQuestion
 
 	/*
