@@ -22,11 +22,11 @@
 <a href="<c:url value="/surveys" />">Alle enquetes</a>&ensp;&mdash;&ensp;
 	<c:choose>
 	    <c:when test="${empty sessionScope.user}">
-			<a href="<c:url value="/inloggen" />">Inloggen</a>
+			<a href="<c:url value="/inloggen" />">Inloggen</a>&ensp;&mdash;&ensp;
+			<a href="<c:url value="/registreren" />">Registreren</a>
 	    </c:when>
 	    <c:otherwise>
 	        <a href="<c:url value="/uitloggen" />">Uitloggen</a>
 	    </c:otherwise>
 	</c:choose>
-
 </div>

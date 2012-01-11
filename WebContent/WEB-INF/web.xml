@@ -6,6 +6,10 @@
     <javaee:res-type>javax.sql.DataSource</javaee:res-type>
     <javaee:res-auth>Container</javaee:res-auth>
   </javaee:resource-ref>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/WEB-INF/pages/error_page.jsp</location>
+  </error-page>
   <servlet>
     <servlet-name>index</servlet-name>
     <jsp-file>/index.jsp</jsp-file>
@@ -77,5 +81,5 @@
   <servlet-mapping>
     <servlet-name>RunQuestionnaire</servlet-name>
     <url-pattern>/enquete/*</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping> 
 </web-app>

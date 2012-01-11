@@ -6,6 +6,11 @@
 <jsp:include page="../../inc/pagehead.jsp" />
 
 <h1>Enquete - ${survey.title}</h1>
+<c:if test="${not empty status}">
+	<div class="status" style="background-color: #ccc; padding: 10px; margin-bottom: 10px;">
+		<p>${status}</p>
+	</div>
+</c:if>
 
 <c:if test="${requestScope.hasPrev =='true'}">
 	<a href="<c:url value="/enquete/${survey.id}/${questionNumber - 1}" />">Vorige vraag</a>
@@ -15,7 +20,9 @@
    		<a href="<c:url value="/enquete/${survey.id}/${questionNumber + 1}" />">Volgende vraag</a>
    	</c:when>
    	<c:otherwise>
-   		<a href="<c:url value="/enquete/${survey.id}/afronden" />">Afronden</a>
+   		<c:if test="${survey.completed == 'false'}">
+   			<a href="<c:url value="/enquete/${survey.id}/afronden" />">Afronden</a>
+		</c:if>
    	</c:otherwise>
 </c:choose>
 
@@ -56,7 +63,7 @@
 				</c:when>
 			    
 			    <c:otherwise>
-			    	<textarea name="answer" cols="60" rows="5"></textarea><br />	
+			    	<textarea name="answer" cols="60" rows="5">${question.answer}</textarea><br />	
 			    </c:otherwise>
 			</c:choose>
 			<input style="margin-top: 30px;" type="submit" name="saveQuestion" value="Opslaan" />
