@@ -31,7 +31,7 @@ a:active {color:#aa0000;}  /* selected link */
 
 .answer {
 	font-weight: bold;
-	color: #ff0000;
+	color: #ee0000;
 }
 
 #content {

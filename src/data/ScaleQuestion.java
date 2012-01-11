@@ -26,8 +26,6 @@ public class ScaleQuestion extends Question {
 		this.comment = answers[1];
 	}
 	
-	//TODO Constructor with userId
-	
 	/**
 	 * Gets the number of steps for this ScaleQuestion
 	 * @return

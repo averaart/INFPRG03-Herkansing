@@ -6,7 +6,7 @@ public class Question {
 	public final int surveyId;
 	protected int userId = -1;
 	private String text;
-	protected String answer;
+	protected String answer = "";
 	
 	/**
 	 * Basic constructor for a text-only Question

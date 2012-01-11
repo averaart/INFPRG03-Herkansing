@@ -30,45 +30,7 @@ public class RunQuestionnaire extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		String pathInfo = request.getPathInfo();
-		String[] parts;
-		int surveyId = -1;
-		int questionNumber = -1;
-		int userId = -1;
-
-		/**
-		 * Matches the pathInfo with '/id/id/...'?
-		 */
-		if (Pattern.matches("/(\\d+)/(\\d+)/?.*", pathInfo)) {
-			parts = Pattern.compile("/").split(request.getPathInfo());
-			surveyId = Integer.parseInt(parts[1]);
-			questionNumber = Integer.parseInt(parts[2]);
-
-			/**
-			 * Must access be granted?
-			 */
-			if (!grantAccess(request, false, surveyId)) {
-				return; // TODO
-			}
-		}
-
-		HttpSession session = request.getSession(true);
-		User user = (User) session.getAttribute("user");
-		userId = user.id;
-
-		/**
-		 * route
-		 */
-		if (Pattern.matches("/(\\d+)/(\\d+)/?", pathInfo)) {
-			showQuestion(request, response, surveyId, userId, questionNumber);
-		}
-		else if (Pattern.matches("/(\\d+)/(\\d+)/afronden/?", pathInfo)) {
-			// Completion page
-		}
-		else {
-			// 404 - page not found
-		}
+		route(request, response, false);
 	}
 
 	/**
@@ -77,51 +39,7 @@ public class RunQuestionnaire extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		// restrict
-		// correct path pattern
-		// User logged in
-		// User enrolled in survey
-		// Survey not completed
-
-		HttpSession session = request.getSession(false);
-		User user = (User) session.getAttribute("user");
-
-		if (Pattern.matches("/(\\d+)/(\\d+)", request.getPathInfo()) && user != null) {
-
-			String[] s = Pattern.compile("/").split(request.getPathInfo());
-			int surveyId = Integer.parseInt(s[1]);
-			int questionNumber = Integer.parseInt(s[2]) - 1;
-			Survey survey = Dao.survey(surveyId);
-
-			if (survey != null) {
-
-				if (questionNumber >= 0 && questionNumber <= survey.questions.size()) {
-					Question question = survey.questions.get(questionNumber);
-
-					if (question instanceof MultipleChoiceQuestion) {
-
-						String answer = request.getParameter("answer");
-						String comment = request.getParameter("comment");
-
-						question.setUserId(user.id);
-						question.setAnswer(answer);
-						((MultipleChoiceQuestion) question).setComment(comment);
-
-						// ((MultipleChoiceQuestion)
-						// question).setComment(comment);
-
-					}
-					else if (question instanceof ScaleQuestion) {
-						// ScaleQuestion
-					}
-					else {
-						// Open question
-						request.setAttribute("questionType", "open");
-					}
-				}
-			}
-		}
+		route(request, response, true);
 	}
 
 	/**
@@ -177,33 +95,151 @@ public class RunQuestionnaire extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void showQuestion(HttpServletRequest request, HttpServletResponse response, int surveyId, int userId, int questionNumber) throws ServletException,
+	public void showQuestion(HttpServletRequest request, HttpServletResponse response, int surveyId, int userId, int questionNumber, String status) throws ServletException,
 			IOException {
 
-//		Survey survey = Dao.survey(surveyId);
 		Survey survey = Dao.survey(new User(userId), surveyId);
-		int questionId = survey.questions.get(questionNumber - 1).getId();
-		Question question = Dao.question(questionId, userId);
+		if (questionNumber > 0 && survey.questions.size() >= questionNumber) {
+			int questionId = survey.questions.get(questionNumber - 1).getId();
+			Question question = Dao.question(questionId, userId);
 
-		if (question instanceof MultipleChoiceQuestion) {
-			request.setAttribute("questionType", "option");
+			if (question instanceof MultipleChoiceQuestion) {
+				request.setAttribute("questionType", "option");
+			}
+			else if (question instanceof ScaleQuestion) {
+				request.setAttribute("questionType", "scale");
+			}
+			else {
+				request.setAttribute("questionType", "open");
+			}
+
+			request.setAttribute("survey", survey);
+			request.setAttribute("question", question);
+			request.setAttribute("questionNumber", questionNumber);
+
+			request.setAttribute("hasPrev", (questionNumber > 1));
+			request.setAttribute("hasNext", (questionNumber + 0 < survey.questions.size()));
+
+			RequestDispatcher rD = request.getRequestDispatcher("/WEB-INF/pages/question.jsp");
+			rD.forward(request, response);
 		}
-		else if (question instanceof ScaleQuestion) {
-			request.setAttribute("questionType", "scale");
-			System.out.println("ANSWEr NULL?: " + question.getAnswer());
+	}
+	
+	public void showCompletionPage(HttpServletRequest request, HttpServletResponse response, int surveyId, int userId) throws ServletException, IOException {
+		Survey survey = Dao.survey(new User(userId), surveyId);
+		ArrayList<Question> questions = survey.questions;
+		ArrayList<Question> questionsAnswers = new ArrayList<Question>();
+		boolean allowComplete = true;
+		
+		for(Question q : questions) {
+			questionsAnswers.add(Dao.question(q.id, userId));
+		}
+		
+		for(Question q : questionsAnswers) {
+			if (q.getAnswer() == null || q.getAnswer().compareTo("") == 0) {
+				allowComplete = false;
+				break;
+			}
+		}
+		
+		request.setAttribute("survey", survey);
+		request.setAttribute("allowComplete", allowComplete);
+		request.setAttribute("questions", questionsAnswers);
+		
+		// TODO completebutton in complete_survey.jsp. Can be done when answers can be saved.
+		RequestDispatcher rD = request.getRequestDispatcher("/WEB-INF/pages/complete_survey.jsp");
+		rD.forward(request, response);		
+	}
+	
+	public void route(HttpServletRequest request, HttpServletResponse response, boolean methodIsPost) throws ServletException, IOException {
+		String pathInfo = request.getPathInfo();
+		String[] parts;
+		int surveyId = -1;
+		int questionNumber = -1;
+		int userId = -1;
+		String status = "";
+
+		/**
+		 * Matches the pathInfo
+		 */
+		if (Pattern.matches("/(\\d+)/(\\d+)/?", pathInfo)) {
+			parts = Pattern.compile("/").split(request.getPathInfo());
+			surveyId = Integer.parseInt(parts[1]);
+			questionNumber = Integer.parseInt(parts[2]);
+		}
+		if(Pattern.matches("/(\\d+)/afronden/?", pathInfo)) {
+			parts = Pattern.compile("/").split(request.getPathInfo());
+			surveyId = Integer.parseInt(parts[1]);
+		}
+
+		/**
+		 * Must access be granted?
+		 */
+		if (!grantAccess(request, methodIsPost, surveyId)) {
+			return; // TODO no access granted
 		}
 		else {
-			request.setAttribute("questionType", "open");
+			HttpSession session = request.getSession(true);
+			User user = (User) session.getAttribute("user");
+			userId = user.id;
 		}
 
-		request.setAttribute("survey", survey);
-		request.setAttribute("question", question);
-		request.setAttribute("questionNumber", questionNumber);
-
-		request.setAttribute("hasPrev", (questionNumber > 1));
-		request.setAttribute("hasNext", (questionNumber + 0 < survey.questions.size()));
-
-		RequestDispatcher rD = request.getRequestDispatcher("/WEB-INF/pages/question.jsp");
-		rD.forward(request, response);
+		/**
+		 * Route
+		 */
+		if (Pattern.matches("/(\\d+)/(\\d+)/?", pathInfo)) {
+			if(methodIsPost) {
+				if(!saveAnswer(request, response, questionNumber, userId, surveyId)){
+					status = "Er is geen correct antwoord ingevuld";
+				}
+			}
+			showQuestion(request, response, surveyId, userId, questionNumber, status);
+		}
+		else if (Pattern.matches("/(\\d+)/afronden/?", pathInfo)) {
+			//TODO complete page post (if methodIsPost)
+			showCompletionPage(request, response, surveyId, userId);
+		}
+		else {
+			// TODO 404 - page not found
+		}
+	}
+	
+	public boolean saveAnswer(HttpServletRequest request, HttpServletResponse response, int questionNumber, int userId, int surveyId) {
+		Survey survey = Dao.survey(new User(userId), surveyId);
+		
+		if (questionNumber > 0 && survey.questions.size() >= questionNumber) {
+			int questionId = survey.questions.get(questionNumber - 1).getId();
+			Question question = Dao.question(questionId, userId);
+			
+			String answer = request.getParameter("answer").trim();
+			String comment;
+			
+			if(answer.compareTo("") == 0) {
+				return false;
+			}
+			
+			boolean answerChanged = (question.getAnswer().compareTo(answer) != 0);
+			if(answerChanged) {
+				question.setAnswer(answer);
+			}
+			
+			boolean commentChanged = false;
+			if (question instanceof MultipleChoiceQuestion) {
+				comment = request.getParameter("comment").trim();
+				if(((MultipleChoiceQuestion) question).getComment() == comment) {
+					
+				}
+			}
+			else if (question instanceof ScaleQuestion) {
+				comment = request.getParameter("comment").trim();
+			}
+			
+			question.setUserId(userId);
+			question.setAnswer(answer);
+//			((MultipleChoiceQuestion) question).setComment(comment);
+		}
+		
+		return false;
 	}
 }
+
