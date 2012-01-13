@@ -714,7 +714,7 @@ public class Dao {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-
+		
 		return rs;
 	}
 
@@ -773,3 +773,4 @@ public class Dao {
 		}
 	}
 }
+
