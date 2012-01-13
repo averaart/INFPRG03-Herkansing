@@ -6,7 +6,7 @@ public class Question {
 	public final int surveyId;
 	protected int userId = -1;
 	private String text;
-	protected String answer;
+	protected String answer = "";
 	
 	/**
 	 * Basic constructor for a text-only Question
@@ -60,17 +60,42 @@ public class Question {
 	}
 	
 	/**
+	 * Get the answer
+	 * @return the answer
+	 */
+	public String getAnswer() {
+		return this.answer;
+	}
+	
+	/**
 	 * Sets the User's answer to this question
 	 * @param answer
 	 */
 	public void setAnswer(String answer){
-		Dao.storeAnswer(this, answer);
+//		Dao.storeAnswer(this, answer);
 		this.answer = answer;
+	}
+	
+	/**
+	 * Sets the User's id
+	 * @param userId The unique identifier of the User
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * Get the Question's id
+	 * @return question's id
+	 */
+	public int getId() {
+		return this.id;
 	}
 	
 	/**
 	 * Pretty print the Question, and if applicable, the answer.
 	 */
+	@Override
 	public String toString(){
 		String result = "";
 		result += getText();

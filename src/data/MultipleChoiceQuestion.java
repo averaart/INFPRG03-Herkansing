@@ -6,7 +6,7 @@ import java.util.Hashtable;
 public class MultipleChoiceQuestion extends Question {
 
 	private String comment;
-	private ArrayList<String> options;
+	private final ArrayList<String> options;
 
 	/**
 	 * Basic constructor for a MultipleChoiceQuestion
@@ -53,6 +53,22 @@ public class MultipleChoiceQuestion extends Question {
 	public boolean addOption(String option) {
 		options.add(option);
 		return true;
+	}
+	
+	/**
+	 * Set the comment
+	 * @param comment
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	/**
+	 * Get the comment
+	 * @return the comment
+	 */
+	public String getComment() {
+		return this.comment;
 	}
 
 	/**

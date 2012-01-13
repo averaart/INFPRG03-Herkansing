@@ -10,7 +10,7 @@
 
 <ul>
 <c:forEach var="survey" items="${mySurveys}">
-	<li><c:out value="${survey.title}" />
+	<li><a href="<c:url value="/enquete/${survey.id}/1" />"><c:out value="${survey.title}" /></a>
 	<c:if test="${survey.completed == false}">
 		<a href="disconnect?surveyid=${survey.id}"><img src="img/delete.png" /></a>
 	</c:if>

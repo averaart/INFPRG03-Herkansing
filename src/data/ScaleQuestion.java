@@ -1,11 +1,12 @@
 package data;
 
+
 public class ScaleQuestion extends Question {
 
 	private int range;
+	private String comment;
 	private String lowText;
 	private String highText;
-	//TODO comments
 	
 	/**
 	 * Basic constructor for a ScaleQuestion
@@ -15,8 +16,15 @@ public class ScaleQuestion extends Question {
 	public ScaleQuestion(int id, int surveyId) {
 		super(id, surveyId);
 	}
+
 	
-	//TODO Constructor with userId
+	public ScaleQuestion(int id, int surveyId, int userId) {
+		super(id, surveyId, userId);
+		this.userId = userId;
+		String[] answers = Dao.answer(this);
+		this.answer = answers[0];
+		this.comment = answers[1];
+	}
 	
 	/**
 	 * Gets the number of steps for this ScaleQuestion
@@ -71,6 +79,22 @@ public class ScaleQuestion extends Question {
 	public String getHighText(){
 		return highText;
 	}
+	
+	/**
+	 * Set the comment
+	 * @param comment
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	/**
+	 * Get the comment
+	 * @return the comment
+	 */
+	public String getComment() {
+		return this.comment;
+	}
 
 	@Override
 	/**
@@ -91,6 +115,7 @@ public class ScaleQuestion extends Question {
 	 * Pretty prints a scale question
 	 * @param getStats If TRUE, adds the average choice to the string.
 	 */
+	@Override
 	public String toString(boolean getStats){
 		double average = Dao.stats(this);
 		String result = super.toString()+"<br>"+
