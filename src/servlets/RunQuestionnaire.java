@@ -237,6 +237,7 @@ public class RunQuestionnaire extends HttpServlet {
 			int questionId = survey.questions.get(questionNumber - 1).getId();
 			Question question = Dao.question(questionId, userId);
 			question.setUserId(userId);
+			question.setQuestionNumber(questionNumber);
 
 			
 			String comment = request.getParameter("comment");

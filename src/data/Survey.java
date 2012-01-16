@@ -9,11 +9,22 @@ public class Survey {
 	public ArrayList<Question> questions;
 	public boolean completed;
 	public User user;
+	private int questionPointer;
+	
+	
 	
 	/*
 	 * Survey
 	 */
 	
+	public int getQuestionPointer() {
+		return questionPointer;
+	}
+
+	public void setQuestionPointer(int questionPointer) {
+		this.questionPointer = questionPointer;
+	}
+
 	/**
 	 * Default constructor for JSP pages. SHOULD NEVER BE USED.
 	 */

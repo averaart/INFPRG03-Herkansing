@@ -10,11 +10,15 @@
 
 <ul>
 <c:forEach var="survey" items="${mySurveys}">
-	<li><a href="<c:url value="/enquete/${survey.id}/1" />"><c:out value="${survey.title}" /></a>
-	<c:if test="${survey.completed == false}">
-		<a href="disconnect?surveyid=${survey.id}"><img src="img/delete.png" /></a>
-	</c:if>
-	</li>
+	<c:choose>
+		<c:when test="${survey.completed == false}">
+			<li><a href="<c:url value="/enquete/${survey.id}/${survey.questionPointer }" />"><c:out value="${survey.title}" /></a>
+			<a href="disconnect?surveyid=${survey.id}"><img src="img/delete.png" /></a></li>
+		</c:when>
+		<c:otherwise>
+			<li><a href="<c:url value="/enquete/${survey.id}/1" />"><c:out value="${survey.title}" /></a></li>
+		</c:otherwise>
+	</c:choose>
 </c:forEach>
 </ul>
 

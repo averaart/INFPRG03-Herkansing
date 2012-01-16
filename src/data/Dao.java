@@ -1,10 +1,12 @@
 package data;
 
-// TODO Lijst van alle enquetes opvragen. Indien ingelogd: geplitst in
-// "Mijn enquetes" en "Overige enquetes"
-// TODO Enquete uit "overige" lijst toevoegen
-// TODO Enquete uit "eigen" lijst verwijderen, mits niet voltooid.
 // TODO Enquete statistieken weergeven
+// TODO deployment schrijven/testen
+// TODO automatische gegenereerde code weghalen
+// TODO jsp's op één plek zetten
+// TODO https voor inloggen/registreren
+// TODO System.out's weghalen???
+// TODO javadoc waar nodig
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -301,13 +303,14 @@ public class Dao {
 	 */
 	public static Survey survey(User user, int surveyId) {
 		Survey survey = null;
-		ResultSet rs = query("SELECT survey.id, title, completed " + "FROM user " + "JOIN user_survey " + "ON user.id = user_survey.user_id " + "JOIN survey "
+		ResultSet rs = query("SELECT survey.id, title, completed, question_pointer " + "FROM user " + "JOIN user_survey " + "ON user.id = user_survey.user_id " + "JOIN survey "
 				+ "ON user_survey.survey_id = survey.id " + "WHERE user.id = " + user.id + " AND survey.id = " + surveyId);
 		try {
 			if (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
 				survey.questions = questions(survey.id);
+				survey.setQuestionPointer(rs.getInt(4));
 				survey.user = user;
 				if (rs.getInt(3) == 1)
 					survey.setCompleted();
@@ -329,12 +332,13 @@ public class Dao {
 	public static ArrayList<Survey> surveys(User user) {
 		ArrayList<Survey> surveys = new ArrayList<Survey>();
 		Survey survey = null;
-		ResultSet rs = query("SELECT survey.id, title, completed " + "FROM user " + "JOIN user_survey " + "ON user.id = user_survey.user_id " + "JOIN survey "
+		ResultSet rs = query("SELECT survey.id, title, completed, question_pointer " + "FROM user " + "JOIN user_survey " + "ON user.id = user_survey.user_id " + "JOIN survey "
 				+ "ON user_survey.survey_id = survey.id " + "WHERE user.id = " + user.id);
 		try {
 			while (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
+				survey.setQuestionPointer(rs.getInt(4));
 				if (rs.getInt(3) == 1)
 					survey.setCompleted();
 				surveys.add(survey);
@@ -665,31 +669,6 @@ public class Dao {
 	}
 
 	/**
-	 * Stores the answer to a Question in the database.
-	 * 
-	 * @param question It is assumed that a userId has been assigned to this
-	 *            Question.
-	 * @param answer
-	 */
-	public static void storeAnswer(Question question, String answer) {
-		ResultSet rs = query("SELECT text " + "FROM answer " + "WHERE user_id = " + question.getUserId() + " " + "AND question_id = " + question.id);
-		try {
-			if (rs.next()) {
-				rs.updateString(1, answer);
-				rs.updateRow();
-			}
-			else {
-				query("INSERT INTO answer(question_id, user_id, text) " + "VALUES (" + question.id + ", " + question.getUserId() + ", '" + answer + "')");
-			}
-		}
-		catch (SQLException ex) {
-			Logger lgr = Logger.getLogger(Dao.class.getName());
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
-		}
-
-	}
-
-	/**
 	 * Stores the answer to a Question.
 	 * @param question The question which contains the answer.
 	 * @return True if successful, false if not.
@@ -700,7 +679,8 @@ public class Dao {
 
 		try {
 			makeConnection();
-
+			con.setAutoCommit(false);
+			
 			if (answerId == -1) {
 				String qInsertAnswer = "INSERT INTO answer(question_id, user_id, text)" + "VALUES (?, ?, ?)";
 
@@ -721,6 +701,8 @@ public class Dao {
 				storeAnswer.execute();
 			}
 
+			Dao.updateQuestionPointer(question);
+			con.setAutoCommit(true);
 			storeAnswer.close();
 			return true;
 
@@ -783,6 +765,7 @@ public class Dao {
 				storeAnswerOption.setInt(2, answerId);
 				storeAnswerOption.execute();
 			}
+			Dao.updateQuestionPointer(question);
 			con.commit();
 			con.setAutoCommit(true);
 
@@ -850,6 +833,7 @@ public class Dao {
 				storeAnswerScale.setInt(2, answerId);
 				storeAnswerScale.execute();
 			}
+			Dao.updateQuestionPointer(question);
 			con.commit();
 			con.setAutoCommit(true);
 
@@ -1048,6 +1032,30 @@ public class Dao {
 		}
 	}
 
+	private static boolean updateQuestionPointer(Question question) {
+		PreparedStatement updateQuestionPointer;
+		try {
+			makeConnection();
+
+			String qUpdateQuestionPointer = "UPDATE user_survey SET question_pointer = ? WHERE survey_id = ? AND user_id = ?";
+
+			updateQuestionPointer = con.prepareStatement(qUpdateQuestionPointer);
+			updateQuestionPointer.setInt(1, question.getQuestionNumber());
+			updateQuestionPointer.setInt(2, question.surveyId);
+			updateQuestionPointer.setInt(3, question.getUserId());
+			updateQuestionPointer.execute();
+			
+			updateQuestionPointer.close();
+			return false;
+
+		}
+		catch (SQLException e) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.WARNING, e.getMessage(), e);
+			return false;
+		}		
+	}
+	
 	/**
 	 * Register Driver and make connection with the database.
 	 */

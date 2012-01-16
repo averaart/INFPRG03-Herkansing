@@ -7,7 +7,16 @@ public class Question {
 	protected int userId = -1;
 	private String text;
 	protected String answer = "";
+	private int questionNumber;
 	
+	public int getQuestionNumber() {
+		return questionNumber;
+	}
+
+	public void setQuestionNumber(int questionNumber) {
+		this.questionNumber = questionNumber;
+	}
+
 	/**
 	 * Basic constructor for a text-only Question
 	 * @param id The unique identifier for this Question
@@ -72,7 +81,6 @@ public class Question {
 	 * @param answer
 	 */
 	public void setAnswer(String answer){
-//		Dao.storeAnswer(this, answer);
 		this.answer = answer;
 	}
 	
