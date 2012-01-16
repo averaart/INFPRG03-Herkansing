@@ -10,6 +10,7 @@ public class Survey {
 	public boolean completed;
 	public User user;
 	private int questionPointer;
+	private int correspondents;
 	
 	
 	
@@ -17,6 +18,14 @@ public class Survey {
 	 * Survey
 	 */
 	
+	public int getCorrespondents() {
+		return correspondents;
+	}
+
+	public void setCorrespondents(int correspondents) {
+		this.correspondents = correspondents;
+	}
+
 	public int getQuestionPointer() {
 		return questionPointer;
 	}

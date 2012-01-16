@@ -257,13 +257,14 @@ public class Dao {
 	public static ArrayList<Survey> surveys() {
 		ArrayList<Survey> surveys = new ArrayList<Survey>();
 		Survey survey = null;
-		ResultSet rs = query("SELECT id, title FROM survey");
+		ResultSet rs = query("SELECT survey.id, survey.title, SUM(user_survey.completed) AS completed FROM survey JOIN user_survey on survey_id = survey.id GROUP BY survey_id");
 
 		try {
 			while (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
 				survey.questions = questions(survey.id);
+				survey.setCorrespondents(rs.getInt(3));
 				surveys.add(survey);
 			}
 		}
@@ -377,6 +378,14 @@ public class Dao {
 		return surveys;
 	}
 
+	public static ArrayList<Survey> surveysStats(User user) {
+		
+		String q = "SELECT survey.id, survey.title, SUM(user_survey.completed) AS completed FROM survey JOIN user_survey on survey_id = survey.id GROUP BY survey_id";
+		
+		
+		return null;
+	}
+	
 	/**
 	 * Fetches all Users that are connected to a particular Survey
 	 * 
