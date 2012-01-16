@@ -937,7 +937,7 @@ public class Dao {
 		FileReader fr;
 		ScriptRunner sr = new ScriptRunner(con, false, true);
 		try {
-			fr = new FileReader("src/data/db.sql");
+			fr = new FileReader("src/data/infprg03.sql");
 			sr.runScript(fr);
 		}
 		catch (FileNotFoundException e) {
