@@ -19,6 +19,16 @@ SET time_zone = "+00:00";
 --
 -- Database: `infprg03`
 --
+DROP TABLE IF EXISTS `answer_option`;
+DROP TABLE IF EXISTS `answer_scale`;
+DROP TABLE IF EXISTS `answer`;
+DROP TABLE IF EXISTS `option`;
+DROP TABLE IF EXISTS `scale`;
+DROP TABLE IF EXISTS `question`;
+DROP TABLE IF EXISTS `user_survey`;
+DROP TABLE IF EXISTS `survey`;
+DROP TABLE IF EXISTS `user`;
+
 
 -- --------------------------------------------------------
 

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Machine: localhost
--- Genereertijd: 07 jan 2012 om 13:36
+-- Genereertijd: 16 jan 2012 om 21:54
 -- Serverversie: 5.5.16
 -- PHP-Versie: 5.3.8
 
@@ -19,6 +19,16 @@ SET time_zone = "+00:00";
 --
 -- Database: `infprg03`
 --
+DROP TABLE IF EXISTS `answer_option`;
+DROP TABLE IF EXISTS `answer_scale`;
+DROP TABLE IF EXISTS `answer`;
+DROP TABLE IF EXISTS `option`;
+DROP TABLE IF EXISTS `scale`;
+DROP TABLE IF EXISTS `question`;
+DROP TABLE IF EXISTS `user_survey`;
+DROP TABLE IF EXISTS `survey`;
+DROP TABLE IF EXISTS `user`;
+
 
 -- --------------------------------------------------------
 
@@ -131,27 +141,6 @@ INSERT INTO `answer_scale` (`answer_id`, `value`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabelstructuur voor tabel `answer_type`
---
-
-CREATE TABLE IF NOT EXISTS `answer_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
-
---
--- Gegevens worden uitgevoerd voor tabel `answer_type`
---
-
-INSERT INTO `answer_type` (`id`, `type`) VALUES
-(1, 'option'),
-(2, 'scale'),
-(3, 'open');
-
--- --------------------------------------------------------
-
---
 -- Tabelstructuur voor tabel `option`
 --
 
@@ -203,33 +192,31 @@ INSERT INTO `option` (`id`, `question_id`, `text`) VALUES
 CREATE TABLE IF NOT EXISTS `question` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `survey_id` int(11) NOT NULL,
-  `answer_type` int(11) NOT NULL,
   `text` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `survey_id` (`survey_id`),
-  KEY `answer_type` (`answer_type`)
+  KEY `survey_id` (`survey_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
 --
 -- Gegevens worden uitgevoerd voor tabel `question`
 --
 
-INSERT INTO `question` (`id`, `survey_id`, `answer_type`, `text`) VALUES
-(1, 1, 1, 'Welke kleur vind je het leukst?'),
-(2, 1, 2, 'Hoe leuk vind je de kleur beige?'),
-(3, 1, 1, 'Vind je de kleur bruin leuk?'),
-(4, 1, 2, 'Hoe licht is de kleur van de tafel?'),
-(5, 1, 3, 'Beschrijf je gemoedstoestand als je denkt aan de kleur turquoise:'),
-(6, 2, 1, 'Mac of PC?'),
-(7, 2, 1, 'Windows, Linux of OSX?'),
-(8, 2, 1, 'Hoeveel computers bezit u?'),
-(9, 2, 2, 'Windows zuigt...'),
-(10, 2, 3, 'Waarom vindt u dat Steve Balmer ontslagen moet worden?'),
-(11, 3, 1, 'Stan, Kyle, Cartman of Kenny?'),
-(12, 3, 1, 'Moet Kenny echt iedere aflevering dood gaan?'),
-(13, 3, 1, 'Is het je ooit opgevallen dat alleen Cartman altijd zijn achternaam wordt genoemd?'),
-(14, 3, 2, 'Hoe waarschijnlijk is het dat South Park eerder stopt dan dat het stop met grappig zijn?'),
-(15, 3, 3, 'Beschrijf waarom Matt Stone een betere presidentskandidaat is dan Trey Parker:');
+INSERT INTO `question` (`id`, `survey_id`, `text`) VALUES
+(1, 1, 'Welke kleur vind je het leukst?'),
+(2, 1, 'Hoe leuk vind je de kleur beige?'),
+(3, 1, 'Vind je de kleur bruin leuk?'),
+(4, 1, 'Hoe licht is de kleur van de tafel?'),
+(5, 1, 'Beschrijf je gemoedstoestand als je denkt aan de kleur turquoise:'),
+(6, 2, 'Mac of PC?'),
+(7, 2, 'Windows, Linux of OSX?'),
+(8, 2, 'Hoeveel computers bezit u?'),
+(9, 2, 'Windows zuigt...'),
+(10, 2, 'Waarom vindt u dat Steve Balmer ontslagen moet worden?'),
+(11, 3, 'Stan, Kyle, Cartman of Kenny?'),
+(12, 3, 'Moet Kenny echt iedere aflevering dood gaan?'),
+(13, 3, 'Is het je ooit opgevallen dat alleen Cartman altijd zijn achternaam wordt genoemd?'),
+(14, 3, 'Hoe waarschijnlijk is het dat South Park eerder stopt dan dat het stop met grappig zijn?'),
+(15, 3, 'Beschrijf waarom Matt Stone een betere presidentskandidaat is dan Trey Parker:');
 
 -- --------------------------------------------------------
 
@@ -307,6 +294,7 @@ CREATE TABLE IF NOT EXISTS `user_survey` (
   `user_id` int(11) NOT NULL,
   `survey_id` int(11) NOT NULL,
   `completed` bit(1) NOT NULL DEFAULT b'0',
+  `question_pointer` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`,`survey_id`),
   KEY `survey_id` (`survey_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -315,12 +303,12 @@ CREATE TABLE IF NOT EXISTS `user_survey` (
 -- Gegevens worden uitgevoerd voor tabel `user_survey`
 --
 
-INSERT INTO `user_survey` (`user_id`, `survey_id`, `completed`) VALUES
-(1, 1, b'1'),
-(1, 2, b'1'),
-(2, 1, b'1'),
-(2, 2, b'1'),
-(2, 3, b'0');
+INSERT INTO `user_survey` (`user_id`, `survey_id`, `completed`, `question_pointer`) VALUES
+(1, 1, b'1', 1),
+(1, 2, b'1', 1),
+(2, 1, b'1', 1),
+(2, 2, b'1', 1),
+(2, 3, b'0', 1);
 
 --
 -- Beperkingen voor gedumpte tabellen
@@ -356,7 +344,6 @@ ALTER TABLE `option`
 -- Beperkingen voor tabel `question`
 --
 ALTER TABLE `question`
-  ADD CONSTRAINT `question_ibfk_2` FOREIGN KEY (`answer_type`) REFERENCES `answer_type` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `question_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `survey` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --

@@ -75,13 +75,13 @@
 		<c:choose>
 		    <c:when test="${not empty requestScope.questionType and requestScope.questionType == 'option'}">
 				<ul>
-				<c:forEach var="option" items="${question.options}">
+				<c:forEach var="option" items="${question.options}" varStatus="forEachStatus">
 					<c:choose>
 						<c:when test="${option == question.answer}">
-							<li class="answer">${option} - Uw antwoord</li>
+							<li class="answer">${option} - ${question.average.get(forEachStatus.count-1)}% - Uw antwoord</li>
 						</c:when>
 						<c:otherwise>
-							<li>${option}</li>
+							<li>${option} - ${question.average.get(forEachStatus.count-1)}%</li>
 						</c:otherwise>
 					</c:choose>							 
 				</c:forEach>

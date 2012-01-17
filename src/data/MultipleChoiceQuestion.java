@@ -7,6 +7,7 @@ public class MultipleChoiceQuestion extends Question {
 
 	private String comment;
 	private final ArrayList<String> options;
+	private ArrayList<Double> average;
 
 	/**
 	 * Basic constructor for a MultipleChoiceQuestion
@@ -33,6 +34,7 @@ public class MultipleChoiceQuestion extends Question {
 		String[] answers = Dao.answer(this);
 		this.answer = answers[0];
 		this.comment = answers[1];
+		this.average = new ArrayList<Double>();
 	}
 
 	/**
@@ -71,6 +73,31 @@ public class MultipleChoiceQuestion extends Question {
 		return this.comment;
 	}
 
+	public boolean setAverage(){
+		Hashtable<String, Integer> stats = Dao.stats(this);
+		int total = 0;
+		for (Integer val : stats.values()) {
+			total += val;
+		}
+		System.out.println(options.size());
+		for (int i = 0; i < options.size(); i++) {
+			int val;
+			if (stats.get(options.get(i)) != null) {
+				val = stats.get(options.get(i));
+			} else {
+				val = 0;
+			}
+			System.out.println((100.0 / total) * val);
+			average.add((100.0 / total) * val);
+		}
+		return true;
+	}
+	
+	public ArrayList<Double> getAverage(){
+		return average;
+	}
+	
+	
 	/**
 	 * Pretty prints the Question, with all it's options. If an answer is
 	 * present, it will be indicated in the output.

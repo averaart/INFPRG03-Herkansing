@@ -32,7 +32,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 
-		// init();
+//		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -80,14 +80,18 @@ public class Dao {
 		// System.out.println(questions.get(i).toString());
 		// }
 
-		ArrayList<Survey> surveys = surveys(user(1), true);
-		System.out.println(surveys.size());
+//		ArrayList<Survey> surveys = surveys(user(1), true);
+//		System.out.println(surveys.size());
 
 		// connectUserToSurvey(user(1), survey(3));
 		// disconnectUserFromSurvey(user(1), survey(2));
 		// disconnectUserFromSurvey(user(1), survey(3));
 
 		close();
+		
+		MultipleChoiceQuestion question = new MultipleChoiceQuestion(1,1,1);
+		
+		System.out.println(question.getAverage());
 
 	}
 
@@ -503,6 +507,7 @@ public class Dao {
 						question.addOption(rs.getString(7));
 					}
 					while (rs.next());
+					question.setAverage();
 					rs.first();
 					question.setText(rs.getString(3));
 					return question;
