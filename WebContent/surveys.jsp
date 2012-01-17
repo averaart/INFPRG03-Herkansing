@@ -10,7 +10,7 @@
 
 <ul>
 <c:forEach var="survey" items="${surveys}">
-	<li><c:out value="${survey.title}" /></li>
+	<li><c:out value="${survey.title}" /> - ${survey.correspondents} correspondenten</li>
 </c:forEach>
 </ul>
 
