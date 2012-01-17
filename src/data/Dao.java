@@ -1,10 +1,8 @@
 package data;
 
-// TODO Enquete statistieken weergeven
 // TODO deployment schrijven/testen
 // TODO automatische gegenereerde code weghalen
 // TODO jsp's op één plek zetten
-// TODO https voor inloggen/registreren
 // TODO System.out's weghalen???
 // TODO javadoc waar nodig
 
@@ -499,6 +497,7 @@ public class Dao {
 					question.setLowText(rs.getString(5));
 					question.setHighText(rs.getString(6));
 					question.setText(rs.getString(3));
+					question.setAverage();
 					return question;
 				}
 				else if (multi) {

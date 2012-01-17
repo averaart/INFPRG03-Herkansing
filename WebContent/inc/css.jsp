@@ -53,5 +53,9 @@ label {
 	color: #ee3c1c;
 }
 
+div.nextQuestion {
+	float: right;
+}
+
 /*]]>*/
 </style>

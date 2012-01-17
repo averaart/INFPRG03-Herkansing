@@ -7,6 +7,7 @@ public class ScaleQuestion extends Question {
 	private String comment;
 	private String lowText;
 	private String highText;
+	private Double average;
 	
 	/**
 	 * Basic constructor for a ScaleQuestion
@@ -81,7 +82,7 @@ public class ScaleQuestion extends Question {
 	}
 	
 	/**
-	 * Set the comment
+	 * Sets the comment
 	 * @param comment
 	 */
 	public void setComment(String comment) {
@@ -89,11 +90,20 @@ public class ScaleQuestion extends Question {
 	}
 	
 	/**
-	 * Get the comment
+	 * Gets the comment
 	 * @return the comment
 	 */
 	public String getComment() {
 		return this.comment;
+	}
+	
+	public boolean setAverage(){
+		this.average = Dao.stats(this);
+		return true;
+	}
+	
+	public double getAverage(){
+		return this.average;
 	}
 
 	@Override

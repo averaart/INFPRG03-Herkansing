@@ -17,7 +17,7 @@
 </c:if>
 <c:choose>
    	<c:when test="${requestScope.hasNext =='true'}">
-   		<a href="<c:url value="/enquete/${survey.id}/${questionNumber + 1}" />">Volgende vraag</a>
+   		<div class="nextQuestion"><a href="<c:url value="/enquete/${survey.id}/${questionNumber + 1}" />">Volgende vraag</a></div>
    	</c:when>
    	<c:otherwise>
    		<c:if test="${survey.completed == 'false'}">
@@ -111,6 +111,7 @@
 						</c:choose>
 					</c:forEach>
 				</ul>
+				<p>Het gemiddelde antwoord is ${question.average}.</p>
 				<h4>Toelichting op uw antwoord</h4>
 				<c:choose>
 					<c:when test="${not empty question.comment and question.comment != ''}">
