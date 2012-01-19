@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `answer` (
 -- Gegevens worden uitgevoerd voor tabel `answer`
 --
 
-INSERT INTO `answer` (`id`, `question_id`, `user_id`, `text`) VALUES
+INSERT IGNORE INTO `answer` (`id`, `question_id`, `user_id`, `text`) VALUES
 (1, 1, 1, NULL),
 (2, 1, 2, NULL),
 (3, 2, 1, NULL),
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `answer_option` (
 -- Gegevens worden uitgevoerd voor tabel `answer_option`
 --
 
-INSERT INTO `answer_option` (`answer_id`, `option_id`) VALUES
+INSERT IGNORE INTO `answer_option` (`answer_id`, `option_id`) VALUES
 (22, 1),
 (21, 4),
 (23, 5),
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `answer_scale` (
 -- Gegevens worden uitgevoerd voor tabel `answer_scale`
 --
 
-INSERT INTO `answer_scale` (`answer_id`, `value`) VALUES
+INSERT IGNORE INTO `answer_scale` (`answer_id`, `value`) VALUES
 (3, 3),
 (4, 4),
 (7, 5),
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `option` (
 -- Gegevens worden uitgevoerd voor tabel `option`
 --
 
-INSERT INTO `option` (`id`, `question_id`, `text`) VALUES
+INSERT IGNORE INTO `option` (`id`, `question_id`, `text`) VALUES
 (1, 11, 'Stan'),
 (2, 11, 'Kyle'),
 (3, 11, 'Cartman'),
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `question` (
 -- Gegevens worden uitgevoerd voor tabel `question`
 --
 
-INSERT INTO `question` (`id`, `survey_id`, `text`) VALUES
+INSERT IGNORE INTO `question` (`id`, `survey_id`, `text`) VALUES
 (1, 1, 'Welke kleur vind je het leukst?'),
 (2, 1, 'Hoe leuk vind je de kleur beige?'),
 (3, 1, 'Vind je de kleur bruin leuk?'),
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `scale` (
 -- Gegevens worden uitgevoerd voor tabel `scale`
 --
 
-INSERT INTO `scale` (`question_id`, `count`, `low`, `high`) VALUES
+INSERT IGNORE INTO `scale` (`question_id`, `count`, `low`, `high`) VALUES
 (2, 5, 'Helemaal niet', 'Fantastisch'),
 (4, 5, 'Heel donker', 'Heel licht'),
 (9, 5, 'Best veel', 'Ontzettend veel'),
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `survey` (
 -- Gegevens worden uitgevoerd voor tabel `survey`
 --
 
-INSERT INTO `survey` (`id`, `title`) VALUES
+INSERT IGNORE INTO `survey` (`id`, `title`) VALUES
 (1, 'Kleuren'),
 (2, 'Computers'),
 (3, 'South Park');
@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- Gegevens worden uitgevoerd voor tabel `user`
 --
 
-INSERT INTO `user` (`id`, `name`, `password`) VALUES
+INSERT IGNORE INTO `user` (`id`, `name`, `password`) VALUES
 (1, 'andra', 'andra'),
 (2, 'maarten', 'maarten');
 
@@ -286,7 +286,7 @@ CREATE TABLE IF NOT EXISTS `user_survey` (
 -- Gegevens worden uitgevoerd voor tabel `user_survey`
 --
 
-INSERT INTO `user_survey` (`user_id`, `survey_id`, `completed`, `question_pointer`) VALUES
+INSERT IGNORE INTO `user_survey` (`user_id`, `survey_id`, `completed`, `question_pointer`) VALUES
 (1, 1, b'1', 1),
 (1, 2, b'1', 1),
 (2, 1, b'1', 1),

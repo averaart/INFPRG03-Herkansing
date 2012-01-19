@@ -1,7 +1,5 @@
 package data;
 
-// TODO deployment schrijven/testen
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
