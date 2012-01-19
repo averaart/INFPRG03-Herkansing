@@ -42,7 +42,6 @@ public class UserRegistration extends HttpServlet {
 			name = request.getParameter("username").trim();
 			pass = request.getParameter("pass").trim();
 			passCompare = request.getParameter("passCompare").trim();
-			System.out.println(name + pass + passCompare);
 
 			if (name.length() > 0 && pass.length() > 0 && pass.equals(passCompare)) {
 				if (!Dao.userExists(name)) {

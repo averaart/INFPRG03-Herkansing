@@ -1,9 +1,7 @@
 package data;
 
 // TODO deployment schrijven/testen
-// TODO automatische gegenereerde code weghalen
 // TODO jsp's op één plek zetten
-// TODO System.out's weghalen???
 // TODO javadoc waar nodig
 
 import java.io.FileNotFoundException;
@@ -85,11 +83,11 @@ public class Dao {
 		// disconnectUserFromSurvey(user(1), survey(2));
 		// disconnectUserFromSurvey(user(1), survey(3));
 
-		close();
+//		close();
 		
-		MultipleChoiceQuestion question = new MultipleChoiceQuestion(1,1,1);
-		
-		System.out.println(question.getAverage());
+//		MultipleChoiceQuestion question = new MultipleChoiceQuestion(1,1,1);
+//		
+//		System.out.println(question.getAverage());
 
 	}
 
@@ -105,20 +103,32 @@ public class Dao {
 	 * @return The User
 	 */
 	public static User user(String name, String password) {
-
+		PreparedStatement getUser;
 		User user = null;
-		ResultSet rs = query("SELECT id, name, password FROM user WHERE name='" + name + "' AND password='" + password + "'");
-
+		
 		try {
+			Dao.makeConnection();
+			
+			String qUser = "SELECT id, name, password FROM user WHERE name = ? AND password = ?";
+			getUser = con.prepareStatement(qUser);
+			getUser.setString(1, name);
+			getUser.setString(2, password);
+			
+			ResultSet rs = getUser.executeQuery();
 			while (rs.next()) {
 				user = new User(rs.getInt(1));
 				user.setName(rs.getString(2));
 				user.setPassword(rs.getString(3));
 			}
+			rs.close();
+			getUser.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		} 
+		finally {
+			Dao.close();
 		}
 		return user;
 	}
@@ -130,19 +140,31 @@ public class Dao {
 	 * @return The User
 	 */
 	public static User user(int id) {
+		PreparedStatement getUser;
 		User user = null;
-		ResultSet rs = query("SELECT id, name, password FROM user WHERE id=" + id);
-
+		
 		try {
+			Dao.makeConnection();
+			
+			String qUser = "SELECT id, name, password FROM user WHERE id ?";
+			getUser = con.prepareStatement(qUser);
+			getUser.setInt(1, id);
+			
+			ResultSet rs = getUser.executeQuery();		
 			while (rs.next()) {
 				user = new User(rs.getInt(1));
 				user.setName(rs.getString(2));
 				user.setPassword(rs.getString(3));
 			}
+			rs.close();
+			getUser.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 		return user;
 	}
@@ -158,16 +180,23 @@ public class Dao {
 		boolean result = false;
 		String q = "SELECT id FROM user WHERE name= ?";
 		PreparedStatement stmt;
-
+		Dao.makeConnection();
+		
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-			con = DriverManager.getConnection(url, user, password);
 			stmt = con.prepareStatement(q);
 			stmt.setString(1, name);
-			result = stmt.executeQuery().next();
-			stmt.close();
+			ResultSet rs = stmt.executeQuery();
+			result = rs.next();
+			stmt.close();	
+			rs.close();
 		}
 		catch (SQLException e) {
+			result = true;
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, e.getMessage(), e);
+		}
+		finally {
+			Dao.close();
 		}
 		return result;
 	}
@@ -180,7 +209,6 @@ public class Dao {
 	 * @param password The requested password
 	 * @return The new User. NULL if the user name/password already exists.
 	 */
-	// TODO Check prior existence ONLY on name
 	public static User newUser(String name, String password) {
 
 		User user = user(name, password);
@@ -188,9 +216,26 @@ public class Dao {
 			return null;
 		}
 
-		query("INSERT INTO user(name, password) VALUES('" + name + "', '" + password + "')");
+		PreparedStatement insertUser;
+		String qInsterUser = "INSERT INTO user(name, password) VALUES(?, ?)";
+		
+		try {
+			Dao.makeConnection();
+			insertUser = con.prepareStatement(qInsterUser);
+			insertUser.setString(1, name);
+			insertUser.setString(2, password);
+			insertUser.execute();
+			insertUser.close();
+		}
+		catch(SQLException e) {
+			Logger lgr = Logger.getLogger(Dao.class.getName());
+			lgr.log(Level.SEVERE, e.getMessage(), e);
+		}
+		finally {
+			Dao.close();
+		}
+		
 		user = user(name, password);
-
 		return user;
 	}
 
@@ -211,10 +256,14 @@ public class Dao {
 			while (rs.next()) {
 				result = true;
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		} 
+		finally {
+			Dao.close();
 		}
 		return result;
 	}
@@ -239,11 +288,16 @@ public class Dao {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		finally {
+			Dao.close();
+		}
+		
 		if (survey != null) {
 			survey.questions = questions(survey.id);
 		}
@@ -265,15 +319,23 @@ public class Dao {
 			while (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
-				survey.questions = questions(survey.id);
 				survey.setCorrespondents(rs.getInt(3));
 				surveys.add(survey);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		finally {
+			Dao.close();
+		}
+		
+		for (Survey s : surveys) {
+			s.questions = questions(survey.id);
+		}
+		
 		return surveys;
 	}
 
@@ -288,14 +350,14 @@ public class Dao {
 	 * @param survey
 	 */
 	public static void connectUserToSurvey(User user, Survey survey) {
-		query("INSERT INTO user_survey(user_id, survey_id) VALUES (" + user.id + ", " + survey.id + ")");
+		ResultSet s = query("INSERT INTO user_survey(user_id, survey_id) VALUES (" + user.id + ", " + survey.id + ")");
+		Dao.close();	
 	}
 
 	public static void disconnectUserFromSurvey(User user, Survey survey) {
 		query("DELETE FROM user_survey " + "WHERE user_id=" + user.id + " AND survey_id=" + survey.id + " AND completed = 0");
+		Dao.close();	
 	}
-
-	// TODO Disconnect a User from a Survey
 
 	/**
 	 * Fetches the surveys with surveyId and that is connected to a particular
@@ -312,17 +374,22 @@ public class Dao {
 			if (rs.next()) {
 				survey = new Survey(rs.getInt(1));
 				survey.setTitle(rs.getString(2));
-				survey.questions = questions(survey.id);
 				survey.setQuestionPointer(rs.getInt(4));
 				survey.user = user;
 				if (rs.getInt(3) == 1)
 					survey.setCompleted();
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		finally {
+			Dao.close();
+		}
+		
+		survey.questions = questions(survey.id);
 		return survey;
 	}
 
@@ -346,11 +413,16 @@ public class Dao {
 					survey.setCompleted();
 				surveys.add(survey);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		finally {
+			Dao.close();
+		}
+		
 		return surveys;
 	}
 
@@ -372,10 +444,14 @@ public class Dao {
 				survey.setTitle(rs.getString(2));
 				surveys.add(survey);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 		return surveys;
 	}
@@ -383,7 +459,7 @@ public class Dao {
 	public static ArrayList<Survey> surveysStats(User user) {
 		
 		String q = "SELECT survey.id, survey.title, SUM(user_survey.completed) AS completed FROM survey JOIN user_survey on survey_id = survey.id GROUP BY survey_id";
-		
+		Dao.close();
 		
 		return null;
 	}
@@ -406,10 +482,14 @@ public class Dao {
 				user.setPassword(rs.getString(3));
 				users.add(user);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 
 		return users;
@@ -444,6 +524,7 @@ public class Dao {
 					question.setLowText(rs.getString(5));
 					question.setHighText(rs.getString(6));
 					question.setText(rs.getString(3));
+					rs.close();
 					return question;
 				}
 				else if (multi) {
@@ -454,11 +535,13 @@ public class Dao {
 					while (rs.next());
 					rs.first();
 					question.setText(rs.getString(3));
+					rs.close();
 					return question;
 				}
 				else {
 					Question question = new Question(rs.getInt(1), rs.getInt(2));
 					question.setText(rs.getString(3));
+					rs.close();
 					return question;
 				}
 			}
@@ -466,6 +549,9 @@ public class Dao {
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 		return null;
 	}
@@ -485,44 +571,59 @@ public class Dao {
 				+ "LEFT OUTER JOIN scale " + "ON question.id = scale.question_id " + "LEFT OUTER JOIN `option` " + "ON question.id = option.question_id "
 				+ "WHERE question.id = " + id + " " + "ORDER BY option.id");
 
+		Question question = null;
+		boolean scale = false;
+		boolean multi = false;
+		
 		try {
 			if (rs.next()) {
 				rs.getInt(4);
-				boolean scale = (!rs.wasNull());
+				scale = (!rs.wasNull());
 				rs.getString(7);
-				boolean multi = (!rs.wasNull());
+				multi = (!rs.wasNull());
 				if (scale) {
-					ScaleQuestion question = new ScaleQuestion(rs.getInt(1), rs.getInt(2), userId);
-					question.setRange(rs.getInt(4));
-					question.setLowText(rs.getString(5));
-					question.setHighText(rs.getString(6));
-					question.setText(rs.getString(3));
-					question.setAverage();
-					return question;
+					question = new ScaleQuestion(rs.getInt(1), rs.getInt(2), userId);
+					((ScaleQuestion) question).setRange(rs.getInt(4));
+					((ScaleQuestion) question).setLowText(rs.getString(5));
+					((ScaleQuestion) question).setHighText(rs.getString(6));
+					((ScaleQuestion) question).setText(rs.getString(3));
 				}
 				else if (multi) {
-					MultipleChoiceQuestion question = new MultipleChoiceQuestion(rs.getInt(1), rs.getInt(2), userId);
+					question = new MultipleChoiceQuestion(rs.getInt(1), rs.getInt(2), userId);
 					do {
-						question.addOption(rs.getString(7));
+						((MultipleChoiceQuestion) question).addOption(rs.getString(7));
 					}
 					while (rs.next());
-					question.setAverage();
 					rs.first();
 					question.setText(rs.getString(3));
-					return question;
 				}
 				else {
-					Question question = new Question(rs.getInt(1), rs.getInt(2), userId);
+					question = new Question(rs.getInt(1), rs.getInt(2), userId);
 					question.setText(rs.getString(3));
-					return question;
 				}
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-		return null;
+		finally {
+			Dao.close();
+		}
+		
+		if(scale) {
+			((ScaleQuestion) question).retrieveAnswer();
+			((ScaleQuestion) question).setAverage();
+		}
+		else if (multi) {
+			((MultipleChoiceQuestion) question).retrieveAnswer();
+			((MultipleChoiceQuestion) question).setAverage();
+		} else {
+			question.retrieveAnswer();
+		}
+		
+		return question;
 	}
 
 	/**
@@ -533,19 +634,29 @@ public class Dao {
 	 */
 	public static ArrayList<Question> questions(int surveyId) {
 		ArrayList<Question> questions = new ArrayList<Question>();
+		ArrayList<Integer> qIds = new ArrayList<Integer>();
 		Question question = null;
 		ResultSet rs = query("SELECT id, survey_id, text FROM question WHERE survey_id=" + surveyId);
 
 		try {
 			while (rs.next()) {
-				question = question(rs.getInt(1));
-				questions.add(question);
+				qIds.add(rs.getInt(1));
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+		finally {
+			Dao.close();
+		}
+		
+		for(int i : qIds ) {
+			question = question(i);
+			questions.add(question);	
+		}
+		
 		return questions;
 	}
 
@@ -566,10 +677,14 @@ public class Dao {
 			while (rs.next()) {
 				result.put(rs.getString(1), rs.getInt(2));
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 
 		return result;
@@ -589,10 +704,14 @@ public class Dao {
 			while (rs.next()) {
 				result = rs.getDouble(1);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 		return result;
 	}
@@ -613,10 +732,14 @@ public class Dao {
 			while (rs.next()) {
 				result = rs.getString(1);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 
 		return result;
@@ -643,10 +766,14 @@ public class Dao {
 				result[0] = rs.getString(1);
 				result[1] = rs.getString(2);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 
 		return result;
@@ -672,10 +799,14 @@ public class Dao {
 				result[0] = rs.getString(1);
 				result[1] = rs.getString(2);
 			}
+			rs.close();
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+		finally {
+			Dao.close();
 		}
 
 		return result;
@@ -714,17 +845,20 @@ public class Dao {
 				storeAnswer.execute();
 			}
 
-			Dao.updateQuestionPointer(question);
 			con.setAutoCommit(true);
 			storeAnswer.close();
-			return true;
-
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.SEVERE, ex.getMessage(), ex);
 			return false;
 		}
+		finally {
+			Dao.close();
+		}
+
+		Dao.updateQuestionPointer(question);
+		return true;
 	}
 
 	/**
@@ -778,21 +912,23 @@ public class Dao {
 				storeAnswerOption.setInt(2, answerId);
 				storeAnswerOption.execute();
 			}
-			Dao.updateQuestionPointer(question);
 			con.commit();
 			con.setAutoCommit(true);
 
 			storeAnswer.close();
 			storeAnswerOption.close();
-
-			return true;
-
 		}
 		catch (SQLException e) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.WARNING, e.getMessage(), e);
 			return false;
 		}
+		finally {
+			Dao.close();
+		}
+
+		Dao.updateQuestionPointer(question);
+		return true;
 	}
 
 	/**
@@ -846,14 +982,14 @@ public class Dao {
 				storeAnswerScale.setInt(2, answerId);
 				storeAnswerScale.execute();
 			}
-			Dao.updateQuestionPointer(question);
+			
 			con.commit();
 			con.setAutoCommit(true);
 
 			storeAnswer.close();
 			storeAnswerScale.close();
 
-			return true;
+			
 
 		}
 		catch (SQLException e) {
@@ -861,6 +997,12 @@ public class Dao {
 			lgr.log(Level.WARNING, e.getMessage(), e);
 			return false;
 		}
+		finally {
+			Dao.close();
+		}
+		
+		Dao.updateQuestionPointer(question);
+		return true;
 	}
 
 	public static boolean completeSurvey(Survey survey) {
@@ -873,10 +1015,14 @@ public class Dao {
 				completeSurvey.setInt(1, survey.getId());
 				completeSurvey.setInt(2, survey.user.id);
 				completeSurvey.execute();
+				completeSurvey.close();
 		} 
 		catch(SQLException e) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.WARNING, e.getMessage(), e);;
+		}
+		finally {
+			Dao.close();
 		}
 		
 		return false;
@@ -912,7 +1058,6 @@ public class Dao {
 			else {
 				st.executeUpdate(query);
 			}
-
 		}
 		catch (SQLException ex) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
@@ -927,14 +1072,10 @@ public class Dao {
 	 */
 	private static void init() {
 		try {
-			con = DriverManager.getConnection(url, user, password);
-			System.out.println(con.getAutoCommit());
+		Dao.makeConnection();;
 			con.setAutoCommit(false);
-			System.out.println(con.getAutoCommit());
 		}
 		catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			System.out.println("error");
 			e1.printStackTrace();
 		}
 
@@ -948,13 +1089,13 @@ public class Dao {
 			e.printStackTrace();
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Dao.close();
+
 	}
 
 	/**
@@ -962,17 +1103,13 @@ public class Dao {
 	 */
 	private static void close() {
 		try {
-			// if (pst != null) {
-			// pst.close();
-			// }
-			// if (rs != null) {
-			// rs.close();
-			// }
 			if (st != null) {
 				st.close();
+				st = null;
 			}
 			if (con != null) {
 				con.close();
+				con = null;
 			}
 
 		}
@@ -1004,12 +1141,17 @@ public class Dao {
 			if (rAnswerId.next()) {
 				return rAnswerId.getInt(1);
 			}
+			getAnswerId.close();
+			rAnswerId.close();
 			return -1;
 		}
 		catch (SQLException e) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.WARNING, e.getMessage(), e);
 			return -1;
+		}
+		finally {
+			Dao.close();
 		}
 	}
 
@@ -1036,12 +1178,17 @@ public class Dao {
 					return rOptionId.getInt(1);
 				}
 			}
+			getOptionId.close();
+			rOptionId.close();
 			return -1;
 		}
 		catch (SQLException e) {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.WARNING, e.getMessage(), e);
 			return -1;
+		}
+		finally {
+			Dao.close();
 		}
 	}
 
@@ -1066,7 +1213,10 @@ public class Dao {
 			Logger lgr = Logger.getLogger(Dao.class.getName());
 			lgr.log(Level.WARNING, e.getMessage(), e);
 			return false;
-		}		
+		}
+		finally {
+			Dao.close();
+		}
 	}
 	
 	/**

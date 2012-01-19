@@ -22,6 +22,9 @@ public class ScaleQuestion extends Question {
 	public ScaleQuestion(int id, int surveyId, int userId) {
 		super(id, surveyId, userId);
 		this.userId = userId;
+	}
+	
+	public void retrieveAnswer() {
 		String[] answers = Dao.answer(this);
 		this.answer = answers[0];
 		this.comment = answers[1];

@@ -37,9 +37,10 @@ public class Question {
 		this.id = id;
 		this.surveyId = surveyId;
 		this.userId = userId;
-		if (this.getClass().getName() == "data.Question"){
-			this.answer = Dao.answer(this);
-		}
+	}
+	
+	public void retrieveAnswer() {
+		this.answer = Dao.answer(this);
 	}
 
 	/**

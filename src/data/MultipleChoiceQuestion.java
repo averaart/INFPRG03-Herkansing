@@ -31,12 +31,15 @@ public class MultipleChoiceQuestion extends Question {
 		super(id, surveyId, userId);
 		options = new ArrayList<String>();
 		this.userId = userId;
-		String[] answers = Dao.answer(this);
-		this.answer = answers[0];
-		this.comment = answers[1];
 		this.average = new ArrayList<Double>();
 	}
 
+	public void retrieveAnswer() {
+		String[] answers = Dao.answer(this);
+		this.answer = answers[0];
+		this.comment = answers[1];
+	}
+	
 	/**
 	 * Gets all options for this MultipleChoiceQuestion
 	 * 
@@ -79,7 +82,6 @@ public class MultipleChoiceQuestion extends Question {
 		for (Integer val : stats.values()) {
 			total += val;
 		}
-		System.out.println(options.size());
 		for (int i = 0; i < options.size(); i++) {
 			int val;
 			if (stats.get(options.get(i)) != null) {
@@ -87,7 +89,6 @@ public class MultipleChoiceQuestion extends Question {
 			} else {
 				val = 0;
 			}
-			System.out.println((100.0 / total) * val);
 			average.add((100.0 / total) * val);
 		}
 		return true;
