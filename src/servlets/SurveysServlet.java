@@ -31,7 +31,7 @@ public class SurveysServlet extends HttpServlet {
 			ArrayList<Survey> surveys = Dao.surveys();
 			request.setAttribute("surveys", surveys);
 			request.setAttribute("title", "Alle enquetes");
-			RequestDispatcher rd = request.getRequestDispatcher("surveys.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/pages/surveys.jsp");
 			try {
 				rd.forward(request, response);
 			} catch (ServletException e) {
@@ -50,7 +50,7 @@ public class SurveysServlet extends HttpServlet {
 			
 			request.setAttribute("title", "Alle enquetes van "+user.getName());
 
-			RequestDispatcher rd = request.getRequestDispatcher("usersurveys.jsp");
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/pages/usersurveys.jsp");
 			try {
 				rd.forward(request, response);
 			} catch (ServletException e) {

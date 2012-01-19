@@ -5,8 +5,8 @@
 <%@ page import="data.*" %>
 
 
-<jsp:include page="inc/pagehead.jsp"/>
-<jsp:include page="inc/pagetitle.jsp"/>
+<jsp:include page="/inc/pagehead.jsp"/>
+<jsp:include page="/inc/pagetitle.jsp"/>
 
 <ul>
 <c:forEach var="survey" items="${surveys}">
@@ -14,4 +14,4 @@
 </c:forEach>
 </ul>
 
-<jsp:include page="inc/pagefoot.jsp"/>
+<jsp:include page="/inc/pagefoot.jsp"/>

@@ -6,18 +6,13 @@
     <javaee:res-type>javax.sql.DataSource</javaee:res-type>
     <javaee:res-auth>Container</javaee:res-auth>
   </javaee:resource-ref>
+  <welcome-file-list>
+    <welcome-file>/WEB-INF/pages/index.jsp</welcome-file>
+  </welcome-file-list>
   <error-page>
     <error-code>404</error-code>
     <location>/WEB-INF/pages/error_page.jsp</location>
   </error-page>
-  <servlet>
-    <servlet-name>index</servlet-name>
-    <jsp-file>/index.jsp</jsp-file>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>index</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
   <servlet>
     <servlet-name>test</servlet-name>
     <servlet-class>servlets.Test</servlet-class>
@@ -81,5 +76,8 @@
   <servlet-mapping>
     <servlet-name>RunQuestionnaire</servlet-name>
     <url-pattern>/enquete/*</url-pattern>
-  </servlet-mapping> 
+  </servlet-mapping>
+  <listener>
+    <javaee:listener-class>listeners.EnqueteServletContextListener</javaee:listener-class>
+  </listener>
 </web-app>

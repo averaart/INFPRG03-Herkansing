@@ -1,8 +1,6 @@
 package data;
 
 // TODO deployment schrijven/testen
-// TODO jsp's op één plek zetten
-// TODO javadoc waar nodig
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -28,7 +26,7 @@ public class Dao {
 
 	public static void main(String[] args) {
 
-//		init();
+		init();
 
 		// System.out.println(validateUser("andra", "maarten"));
 
@@ -878,7 +876,7 @@ public class Dao {
 
 		try {
 			makeConnection();
-			con.setAutoCommit(false);
+			con.setAutoCommit(true);
 			if (answerId == -1) {
 				String qInsertAnswer = "INSERT INTO answer (question_id, user_id, text)" + "VALUES(?, ?, ?)";
 
@@ -892,6 +890,7 @@ public class Dao {
 
 				answerId = Dao.getAnswerId(q.getId(), q.getUserId());
 
+				makeConnection();
 				storeAnswerOption = con.prepareStatement(qInsertAnswerOption);
 				storeAnswerOption.setInt(1, answerId);
 				storeAnswerOption.setInt(2, optionId);
@@ -912,8 +911,6 @@ public class Dao {
 				storeAnswerOption.setInt(2, answerId);
 				storeAnswerOption.execute();
 			}
-			con.commit();
-			con.setAutoCommit(true);
 
 			storeAnswer.close();
 			storeAnswerOption.close();
@@ -949,7 +946,7 @@ public class Dao {
 		try {
 			makeConnection();
 
-			con.setAutoCommit(false);
+			con.setAutoCommit(true);
 			if (answerId == -1) {
 				String qInsertAnswer = "INSERT INTO answer (question_id, user_id, text) " + "VALUES(?, ?, ?)";
 				String qInsertAnswerScale = "INSERT INTO answer_scale (answer_id, value) " + "VALUES(?, ?)";
@@ -962,6 +959,7 @@ public class Dao {
 
 				answerId = Dao.getAnswerId(q.getId(), q.getUserId());
 
+				makeConnection();
 				storeAnswerScale = con.prepareStatement(qInsertAnswerScale);
 				storeAnswerScale.setInt(1, answerId);
 				storeAnswerScale.setInt(2, answer);
@@ -983,8 +981,7 @@ public class Dao {
 				storeAnswerScale.execute();
 			}
 			
-			con.commit();
-			con.setAutoCommit(true);
+//			con.commit();
 
 			storeAnswer.close();
 			storeAnswerScale.close();
@@ -1098,6 +1095,37 @@ public class Dao {
 
 	}
 
+	/**
+	 * Loads the database file to set up initial values
+	 */
+	public static void deployDatabase(String filename) {
+		try {
+		Dao.makeConnection();;
+			con.setAutoCommit(false);
+		}
+		catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+		FileReader fr;
+		ScriptRunner sr = new ScriptRunner(con, false, true);
+		try {
+			fr = new FileReader(filename);
+			sr.runScript(fr);
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		Dao.close();
+
+	}
+	
 	/**
 	 * Some database connection housekeeping at the end of Main.
 	 */

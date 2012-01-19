@@ -18,7 +18,7 @@
 <body>
 <div id="content">
 <div id="navigation">
-<a href="<c:url value="/" />/">Home</a>&ensp;&mdash;&ensp;
+<a href="<c:url value="/" />">Home</a>&ensp;&mdash;&ensp;
 <a href="<c:url value="/surveys" />">Alle enquetes</a>&ensp;&mdash;&ensp;
 	<c:choose>
 	    <c:when test="${empty sessionScope.user}">
